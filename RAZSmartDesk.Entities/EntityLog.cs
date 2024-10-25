@@ -8,10 +8,6 @@ namespace RAZSmartDesk.Entities
 {
     public class EntityLog
     {
-        public EntityLog()
-        {
-            // empty
-        }
         public bool IsActive { get; set; }
         public string? CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;

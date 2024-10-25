@@ -9,6 +9,8 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "RAZSmartDesk.Database", "RA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAZSmartDesk.Entities", "RAZSmartDesk.Entities\RAZSmartDesk.Entities.csproj", "{CC01EBA8-62F4-4C60-AFA6-4AD0F3FBA549}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAZSmartDesk.DataAccess", "RAZSmartDesk.DataAccess\RAZSmartDesk.DataAccess.csproj", "{42A1779C-3C45-471D-8611-28228636B66E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{CC01EBA8-62F4-4C60-AFA6-4AD0F3FBA549}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC01EBA8-62F4-4C60-AFA6-4AD0F3FBA549}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC01EBA8-62F4-4C60-AFA6-4AD0F3FBA549}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42A1779C-3C45-471D-8611-28228636B66E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42A1779C-3C45-471D-8611-28228636B66E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42A1779C-3C45-471D-8611-28228636B66E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42A1779C-3C45-471D-8611-28228636B66E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
