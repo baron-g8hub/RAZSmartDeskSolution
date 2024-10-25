@@ -18,9 +18,9 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = ".NetCore API with Dapper by: BLugtu",
+        Title = ".NetCore8 API with Dapper by: BLugtu",
         Description = "Web Api with views and Swagger UI.",
-        //TermsOfService = new Uri("https://example.com/terms"),
+        //TermsOfService = new Uri("https://company.com/terms"),
         //Contact = new OpenApiContact
         //{
         //    Name = "Company Contact",

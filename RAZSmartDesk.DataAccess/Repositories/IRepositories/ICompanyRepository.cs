@@ -11,7 +11,7 @@ namespace RAZSmartDesk.DataAccess.Repositories.IRepositories
     {
         Task<IEnumerable<Company>> GetAsync();
 
-        Task<Company> FindAsync(Guid uid);
+        Task<Company?> FindAsync(int? id);
 
         Task<Company> AddAsync(Company model);
 
