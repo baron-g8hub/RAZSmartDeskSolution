@@ -5,11 +5,11 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RAZSmartDesk.WebUI", "RAZSmartDesk.WebUI\RAZSmartDesk.WebUI.csproj", "{CE40781D-C076-4CEA-815B-38AAFAFB9634}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "RAZSmartDesk.Database", "RAZSmartDesk.Database\RAZSmartDesk.Database.sqlproj", "{268BD15B-C275-4EBC-9424-DB65DE63B0BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RAZSmartDesk.Entities", "RAZSmartDesk.Entities\RAZSmartDesk.Entities.csproj", "{CC01EBA8-62F4-4C60-AFA6-4AD0F3FBA549}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAZSmartDesk.Entities", "RAZSmartDesk.Entities\RAZSmartDesk.Entities.csproj", "{CC01EBA8-62F4-4C60-AFA6-4AD0F3FBA549}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RAZSmartDesk.DataAccess", "RAZSmartDesk.DataAccess\RAZSmartDesk.DataAccess.csproj", "{42A1779C-3C45-471D-8611-28228636B66E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAZSmartDesk.DataAccess", "RAZSmartDesk.DataAccess\RAZSmartDesk.DataAccess.csproj", "{42A1779C-3C45-471D-8611-28228636B66E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAZSmartDesk.Common", "RAZSmartDesk.Common\RAZSmartDesk.Common.csproj", "{96BB25D9-2401-4596-9F0A-F098C0675188}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,12 +21,6 @@ Global
 		{CE40781D-C076-4CEA-815B-38AAFAFB9634}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE40781D-C076-4CEA-815B-38AAFAFB9634}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE40781D-C076-4CEA-815B-38AAFAFB9634}.Release|Any CPU.Build.0 = Release|Any CPU
-		{268BD15B-C275-4EBC-9424-DB65DE63B0BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{268BD15B-C275-4EBC-9424-DB65DE63B0BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{268BD15B-C275-4EBC-9424-DB65DE63B0BF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{268BD15B-C275-4EBC-9424-DB65DE63B0BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{268BD15B-C275-4EBC-9424-DB65DE63B0BF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{268BD15B-C275-4EBC-9424-DB65DE63B0BF}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{CC01EBA8-62F4-4C60-AFA6-4AD0F3FBA549}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CC01EBA8-62F4-4C60-AFA6-4AD0F3FBA549}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC01EBA8-62F4-4C60-AFA6-4AD0F3FBA549}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -35,6 +29,10 @@ Global
 		{42A1779C-3C45-471D-8611-28228636B66E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42A1779C-3C45-471D-8611-28228636B66E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42A1779C-3C45-471D-8611-28228636B66E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96BB25D9-2401-4596-9F0A-F098C0675188}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96BB25D9-2401-4596-9F0A-F098C0675188}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96BB25D9-2401-4596-9F0A-F098C0675188}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96BB25D9-2401-4596-9F0A-F098C0675188}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
