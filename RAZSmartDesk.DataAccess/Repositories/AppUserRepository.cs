@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -13,17 +14,32 @@ namespace RAZSmartDesk.DataAccess.Repositories
 {
     public class AppUserRepository : IAppUserRepository
     {
+        private readonly DapperDbContext _context;
 
-        public Task<AppUser> FindAsync(int uid)
+        public AppUserRepository(DapperDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task<IEnumerable<AppUser>> GetAsync()
+        public async Task<IEnumerable<AppUser>> GetAppUsersByCompanyIdAsync(int companyId)
         {
-            throw new NotImplementedException();
+            const string query = "SELECT * FROM AppUsers WHERE CompanyEmployeeId = @companyId ";
+
+            using var connection = _context.CreateConnection();
+            return await connection.QueryAsync<AppUser>(query, new { companyId });
         }
 
+        public async Task<AppUser?> FindByAppUserIdAsync(int id)
+        {
+            const string query = "SELECT * FROM [AppUsers] WHERE AppUserId=@id";
+
+            using var connection = _context.CreateConnection();
+            var result = await connection.QuerySingleOrDefaultAsync<AppUser>(query, new { id });
+            return result;
+        }
+
+
+        // TODO: Apply Stored Procedure when Adding multiple users
         public Task<AppUser> AddAsync(AppUser model)
         {
             throw new NotImplementedException();

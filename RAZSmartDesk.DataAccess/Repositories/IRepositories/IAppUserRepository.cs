@@ -9,9 +9,9 @@ namespace RAZSmartDesk.DataAccess.Repositories.IRepositories
 {
     public interface IAppUserRepository 
     {
-        Task<IEnumerable<AppUser>> GetAsync();
+        Task<IEnumerable<AppUser>> GetAppUsersByCompanyIdAsync(int companyId);
 
-        Task<AppUser> FindAsync(int uid);
+        Task<AppUser?> FindByAppUserIdAsync(int id);
 
         Task<AppUser> AddAsync(AppUser model);
 
