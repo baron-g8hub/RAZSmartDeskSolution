@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RAZSmartDesk.DataAccess.Repositories.IRepositories;
 using RAZSmartDesk.Entities;
 
@@ -17,8 +18,10 @@ namespace RAZSmartDesk.WebUI.Controllers
             _companyRepository = companyRepository;
         }
 
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<AppUser>> Get(int id)
+        [Authorize]
+        public async Task<ActionResult<User>> GetUser(int id)
         {
             try
             {
@@ -38,8 +41,10 @@ namespace RAZSmartDesk.WebUI.Controllers
             }
         }
 
+
         [HttpGet("{companyId}")]
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers(int companyId)
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers(int companyId)
         {
             try
             {
@@ -61,7 +66,7 @@ namespace RAZSmartDesk.WebUI.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] AppUser model)
+        public async Task<IActionResult> Post([FromBody] User model)
         {
             try
             {

@@ -1,14 +1,41 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RAZSmartDesk.DataAccess.DapperDBContext;
 using RAZSmartDesk.DataAccess.Repositories;
 using RAZSmartDesk.DataAccess.Repositories.IRepositories;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load configuration from appsettings.json
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .Build();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<DapperDbContext, DapperDbContext>();
 
+//Add JWT authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = configuration["JwtSettings:Issuer"],
+            ValidAudience = configuration["JwtSettings:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]))
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddTransient<DapperDbContext, DapperDbContext>();
 builder.Services.AddTransient<IAppUserRepository, AppUserRepository>();
 builder.Services.AddTransient<ICompanyRepository, CompanyRepository>();
 
@@ -20,17 +47,6 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1",
         Title = ".NetCore8 API with Dapper by: BLugtu",
         Description = "Web Api with views and Swagger UI.",
-        //TermsOfService = new Uri("https://company.com/terms"),
-        //Contact = new OpenApiContact
-        //{
-        //    Name = "Company Contact",
-        //    Url = new Uri("https://company.com/contact")
-        //},
-        //License = new OpenApiLicense
-        //{
-        //    Name = "Company License",
-        //    Url = new Uri("https://company.com/license")
-        //}
     });
 });
 
@@ -48,13 +64,13 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 
 app.Run();

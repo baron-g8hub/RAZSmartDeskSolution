@@ -9,14 +9,16 @@ namespace RAZSmartDesk.DataAccess.Repositories.IRepositories
 {
     public interface IAppUserRepository 
     {
-        Task<IEnumerable<AppUser>> GetAppUsersByCompanyIdAsync(int companyId);
+        Task<IEnumerable<User>> GetAppUsersByCompanyIdAsync(int companyId);
 
-        Task<AppUser?> FindByAppUserIdAsync(int id);
+        Task<User?> FindByAppUserIdAsync(int id);
 
-        Task<AppUser> AddAsync(AppUser model);
+        Task<User?> FindByUsernamePasswordAsync(string username, string password);
 
-        Task<AppUser> UpdateAsync(AppUser model);
+        Task<User> AddAsync(User model);
 
-        Task<AppUser> RemoveAsync(AppUser model);
+        Task<User> UpdateAsync(User model);
+
+        Task<User> RemoveAsync(User model);
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RAZSmartDesk.Entities
 {
-    public  class AppUserType
+    public  class UserType
     {
 
         public int AppUserTypeId { get; set; }
