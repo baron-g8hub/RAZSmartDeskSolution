@@ -9,8 +9,8 @@ namespace RAZSmartDesk.Entities
     public  class UserType
     {
 
-        public int AppUserTypeId { get; set; }
-        public string? AppUserTypeName { get; set; }
-        public int AppUserTypeLevel { get; set; }
+        public int UserTypeId { get; set; }
+        public string? UserTypeName { get; set; }
+        public int UserTypeLevel { get; set; }
     }
 }

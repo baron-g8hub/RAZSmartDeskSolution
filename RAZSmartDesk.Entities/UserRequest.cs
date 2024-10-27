@@ -9,7 +9,7 @@ namespace RAZSmartDesk.Entities
     public class UserRequest
     {
 
-        public int AppUserRequestId { get; set; }
+        public int UserRequestId { get; set; } = 0;
         public int RequesterId { get; set; }
         public int ApproverId { get; set; } = 0;
         public int RequestTypeId { get; set; }

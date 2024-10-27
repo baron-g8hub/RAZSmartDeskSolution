@@ -8,8 +8,8 @@ namespace RAZSmartDesk.Entities
 {
     public class UserTransaction
     {
-        public int AppUserTransactionId { get; set; }
-        public int AppUserId { get; set; }
+        public int UserTransactionId { get; set; } = 0;
+        public int? UserId { get; set; }
         public int CompanyId { get; set; }
         public string? TransactionName { get; set; }
         public int TransactionTypeId { get; set; }

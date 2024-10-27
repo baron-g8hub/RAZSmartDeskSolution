@@ -8,10 +8,13 @@ namespace RAZSmartDesk.Entities
 {
     public class User : EntityLog 
     {
-        public int AppUserId { get; set; }
-        public int CompanyEmployeeId { get; set; }
+        public int UserId { get; set; }
+        public int UserCompanyId { get; set; }
+        public int UserTypeId { get; set; }
         public string? Username { get; set; }
         public string? Password { get; set; }
-        public int AppUserTypeId { get; set; }
+        public string? UserTypeName { get; set; }
+        public int UserTypeLevel { get; set; } = 0;
+
     }
 }

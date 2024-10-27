@@ -29,22 +29,27 @@ namespace RAZSmartDesk.WebUI.Controllers
 
 
         [HttpPost]
-        public IActionResult Login([FromBody] LoginModel model)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginModel model)
         {
 
             // Check user credentials (in a real application, you'd authenticate against a database)
-            //var appUser = _repository.FindByUsernamePasswordAsync(model.Username, model.Password);
-            if (model is { Username: "demo", Password: "password" })
+            var appUser = await _repository.FindByUsernamePasswordAsync(model.Username, model.Password);
+            if (appUser != null)
             {
-                var token = GenerateAccessToken(model.Username);
-                // Generate refresh token
-                var refreshToken = Guid.NewGuid().ToString();
+                if (model.Username == appUser.Username || model.Password == appUser.Password)
+                {
+                    var token = GenerateAccessToken(model.Username);
+                    // Generate refresh token
+                    var refreshToken = Guid.NewGuid().ToString();
 
-                // Store the refresh token (in-memory for simplicity)
-                RefreshTokens[refreshToken] = model.Username;
+                    // Store the refresh token (in-memory for simplicity)
+                    RefreshTokens[refreshToken] = model.Username;
 
-                return Ok(new { AccessToken = new JwtSecurityTokenHandler().WriteToken(token), RefreshToken = refreshToken });
+                    return Ok(new { AccessToken = new JwtSecurityTokenHandler().WriteToken(token), RefreshToken = refreshToken });
+                }
             }
+
+          
 
             //if (model is { Username: "demo", Password: "password" })
             //{

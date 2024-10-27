@@ -12,11 +12,11 @@ using RAZSmartDesk.Entities;
 
 namespace RAZSmartDesk.DataAccess.Repositories
 {
-    public class AppUserRepository : IAppUserRepository
+    public class UserRepository : IAppUserRepository
     {
         private readonly DapperDbContext _context;
 
-        public AppUserRepository(DapperDbContext context)
+        public UserRepository(DapperDbContext context)
         {
             _context = context;
         }
@@ -29,9 +29,9 @@ namespace RAZSmartDesk.DataAccess.Repositories
             return await connection.QueryAsync<User>(query, new { companyId });
         }
 
-        public async Task<User?> FindByAppUserIdAsync(int id)
+        public async Task<User?> FindByUserIdAsync(int id)
         {
-            const string query = "SELECT * FROM [AppUsers] WHERE AppUserId=@id";
+            const string query = "SELECT * FROM [Users] WHERE UserId=@id";
 
             using var connection = _context.CreateConnection();
             var result = await connection.QuerySingleOrDefaultAsync<User>(query, new { id });
@@ -40,7 +40,20 @@ namespace RAZSmartDesk.DataAccess.Repositories
 
         public async Task<User?> FindByUsernamePasswordAsync(string username, string password)
         {
-            const string query = "SELECT * FROM [AppUsers] WHERE Username=@username AND Password=@password";
+            const string query = @"SELECT Users.UserId, 
+		                                  Users.Password, 
+		                                  Users.UserTypeId,
+		                                  Users.UserCompanyId,
+		                                  Users.IsActive,
+		                                  Users.CreatedBy,
+		                                  Users.CreatedDate,
+		                                  Users.UpdatedBy,
+		                                  Users.UpdatedDate,
+		                                  UserTypes.UserTypeName,
+		                                  UserTypes.UserTypeLevel
+		                                    FROM [Users] 
+		                                    INNER JOIN UserTypes ON Users.UserTypeId = UserTypes.UserTypeId 
+                                            WHERE Users.Username=@username AND Users.Password=@password";
 
             using var connection = _context.CreateConnection();
             var result = await connection.QuerySingleOrDefaultAsync<User>(query, new { username, password });
@@ -63,6 +76,6 @@ namespace RAZSmartDesk.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
-      
+
     }
 }

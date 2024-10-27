@@ -1,0 +1,101 @@
+﻿@model RAZSmartDesk.WebUI.Models.UsersViewModel
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h1>Users</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Entity.UserId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Entity.UserCompanyId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Entity.UserTypeId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Username)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Password)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Entity.UserTypeName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Entity.UserTypeLevel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Entity.IsActive)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Entity.CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Entity.CreatedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Entity.UpdatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Entity.UpdatedDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.EntityList) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserCompanyId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserTypeId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Username)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Password)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserTypeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserTypeLevel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsActive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdatedDate)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
