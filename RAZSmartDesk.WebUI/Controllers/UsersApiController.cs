@@ -31,7 +31,7 @@ namespace RAZSmartDesk.WebUI.Controllers
             _usersRepository = repository;
             _companyRepository = companyRepository;
         }
-        
+
 
         [HttpGet]
         [Authorize]
@@ -92,16 +92,16 @@ namespace RAZSmartDesk.WebUI.Controllers
         //}
 
 
-        [HttpGet("{companyId}")]
+        [HttpGet("{companyId}/{userTypeId}")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers(string companyId)
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers(string companyId, string userTypeId)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var entity = await _usersRepository.GetAppUsersByCompanyIdAsync(int.Parse(companyId));
+                var entity = await _usersRepository.GetAppUsersByCompanyIdAsync(int.Parse(companyId), int.Parse(userTypeId));
                 if (entity == null)
                 {
                     return NotFound("Users not found.");
@@ -230,7 +230,7 @@ namespace RAZSmartDesk.WebUI.Controllers
             return token;
         }
 
-     
+
 
         #endregion
     }

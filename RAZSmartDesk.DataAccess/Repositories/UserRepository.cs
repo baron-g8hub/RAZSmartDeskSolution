@@ -21,9 +21,12 @@ namespace RAZSmartDesk.DataAccess.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<User>> GetAppUsersByCompanyIdAsync(int companyId)
+        public async Task<IEnumerable<User>> GetAppUsersByCompanyIdAsync(int companyId, int userTypeId)
         {
-            const string query = @"SELECT a.[UserId]
+            using var connection = _context.CreateConnection();
+            if (userTypeId == 1)
+            {
+                const string query = @"SELECT a.[UserId]
                                           ,a.Username
 	                                      ,a.Password
 	                                      ,b.CompanyName
@@ -39,9 +42,28 @@ namespace RAZSmartDesk.DataAccess.Repositories
                                       INNER JOIN UserTypes as c
                                       ON  a.UserTypeId = c.UserTypeId 
                                       WHERE a.UserCompanyId = @companyId";
-
-            using var connection = _context.CreateConnection();
-            return await connection.QueryAsync<User>(query, new { companyId });
+                return await connection.QueryAsync<User>(query, new { companyId });
+            }
+            else
+            {
+                const string query = @"SELECT a.[UserId]
+                                          ,a.Username
+	                                      ,a.Password
+	                                      ,b.CompanyName
+	                                      ,c.UserTypeName
+                                          ,a.[IsActive]
+                                          ,a.[CreatedBy]
+                                          ,a.[CreatedDate]
+                                          ,a.[UpdatedBy]
+                                          ,a.[UpdatedDate]
+                                      FROM [Users] as a
+                                      INNER JOIN Companies as b
+                                      ON a.UserCompanyId = b.CompanyId 
+                                      INNER JOIN UserTypes as c
+                                      ON  a.UserTypeId = c.UserTypeId 
+                                      WHERE a.UserCompanyId = @companyId AND a.UserTypeId = @userTypeId";
+                return await connection.QueryAsync<User>(query, new { companyId, userTypeId });
+            }
         }
 
         public async Task<User?> FindByUserIdAsync(int id)

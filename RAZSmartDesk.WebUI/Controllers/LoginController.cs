@@ -83,7 +83,7 @@ namespace RAZSmartDesk.WebUI.Controllers
                                 tokenModel = JsonConvert.DeserializeObject<TokenModel>(apiResponse);
                                 HttpContext.Session.SetString("JWToken", tokenModel.AccessToken);
                             }
-                            return RedirectToAction("Users", "Login", new { id = entity.UserCompanyId });
+                            return RedirectToAction("Users", "Login", new { id = entity.UserCompanyId, userTypeId = entity.UserTypeId });
                             //return RedirectToAction(nameof(Users));
                         }
                         else
@@ -128,7 +128,7 @@ namespace RAZSmartDesk.WebUI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Users(string id)
+        public async Task<IActionResult> Users(string id, string userTypeId)
         {
             try
             {
@@ -153,10 +153,10 @@ namespace RAZSmartDesk.WebUI.Controllers
                     //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                     //httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                    var url = "http://" + HttpContext.Request.Host.Value + "/UsersApi/GetUsers/" + id.ToString();
+                    var url = "http://" + HttpContext.Request.Host.Value + "/UsersApi/GetUsers/" + id + "/" + userTypeId;
                     if (Request.Host.Host == "localhost")
                     {
-                        url = "https://" + HttpContext.Request.Host.Value + "/UsersApi/GetUsers/" + id.ToString();
+                        url = "https://" + HttpContext.Request.Host.Value + "/UsersApi/GetUsers/" + id + "/" + userTypeId;
                     }
                     using (var response = await httpClient.GetAsync(url))
                     {
