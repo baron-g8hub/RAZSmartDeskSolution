@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using RAZSmartDesk.Models;
 using static Dapper.SqlMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
 
 namespace RAZSmartDesk.WebUI.Controllers
 {
@@ -55,74 +56,67 @@ namespace RAZSmartDesk.WebUI.Controllers
                 if (user != null)
                 {
                     entity = user;
-                }
+                    // AuthApi call to request login
+                    var vm = new ApplicationUserModel();
 
-                // AuthApi call to request login
-                var vm = new ApplicationUserModel();
-             
-                var tokenModel = new TokenModel();
+                    var tokenModel = new TokenModel();
 
-                var myContent = JsonConvert.SerializeObject(model);
-                var response = string.Empty;
-                using (var httpClient = new HttpClient())
-                {
-                    var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
-                    var byteContent = new ByteArrayContent(buffer);
-                    byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    var url = "http://" + HttpContext.Request.Host.Value;
-                    if (Request.Host.Host == "localhost")
+                    var myContent = JsonConvert.SerializeObject(model);
+                    var response = string.Empty;
+                    using (var httpClient = new HttpClient())
                     {
-                        url = "https://" + HttpContext.Request.Host.Value + "/UsersApi/login";
-                    }
-                    HttpResponseMessage result = await httpClient.PostAsync(url , byteContent);
-                    if (result.IsSuccessStatusCode)
-                    {
-                        response = result.StatusCode.ToString();
-                        string apiResponse = await result.Content.ReadAsStringAsync();
-                        if (tokenModel != null)
+                        var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
+                        var byteContent = new ByteArrayContent(buffer);
+                        byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        var url = "http://" + HttpContext.Request.Host.Value;
+                        if (Request.Host.Host == "localhost")
                         {
-                            tokenModel = JsonConvert.DeserializeObject<TokenModel>(apiResponse);
-                            HttpContext.Session.SetString("JWToken", tokenModel.AccessToken);
+                            url = "https://" + HttpContext.Request.Host.Value + "/UsersApi/login";
                         }
+                        HttpResponseMessage result = await httpClient.PostAsync(url, byteContent);
+                        if (result.IsSuccessStatusCode)
+                        {
+                            response = result.StatusCode.ToString();
+                            string apiResponse = await result.Content.ReadAsStringAsync();
+                            if (tokenModel != null)
+                            {
+                                tokenModel = JsonConvert.DeserializeObject<TokenModel>(apiResponse);
+                                HttpContext.Session.SetString("JWToken", tokenModel.AccessToken);
+                            }
+                            return RedirectToAction("Users", "Login", new { id = entity.UserCompanyId });
+                            //return RedirectToAction(nameof(Users));
+                        }
+                        else
+                        {
+                            string apiResponse = await result.Content.ReadAsStringAsync();
+                            // Parse response to AppUserContext
 
-                        //entity = JsonConvert.DeserializeObject<User>(apiResponse);
-                        //vm.ApplicationUserId = entity.UserId;
-                        //vm.ApplicationUsername = entity.Username;
-                        //vm.ApplicationUserPassword = entity.Password;
-                        //vm.ApplicationUserTypeId = entity.UserTypeId;
-                        //vm.ApplicationUserTypeName = entity.UserTypeName;
-                        //vm.ApplicationUserToken = entity.
-                        //return CreatedAtAction(nameof(Users(apiResponse)), new { accessToken = apiResponse });
-
-                        return RedirectToAction("Users", "Login", new { id = entity.UserCompanyId });
-                        //return RedirectToAction(nameof(Users));
+                            //if (apiResponse.ToLower().Contains("insufficient"))
+                            //{
+                            //    ModelState.ClearValidationState("Amount");
+                            //    ModelState.AddModelError("Amount", apiResponse);
+                            //}
+                            //else if (apiResponse.ToLower().Contains("source"))
+                            //{
+                            //    ModelState.ClearValidationState("SourceAccount");
+                            //    ModelState.AddModelError("SourceAccount", apiResponse);
+                            //}
+                            //else if (apiResponse.ToLower().Contains("destination"))
+                            //{
+                            //    ModelState.ClearValidationState("DestinationAccount");
+                            //    ModelState.AddModelError("DestinationAccount", apiResponse);
+                            //}
+                            return RedirectToAction(nameof(Index));
+                        }
                     }
-                    else
-                    {
-                        string apiResponse = await result.Content.ReadAsStringAsync();
-                        // Parse response to AppUserContext
-
-                        //if (apiResponse.ToLower().Contains("insufficient"))
-                        //{
-                        //    ModelState.ClearValidationState("Amount");
-                        //    ModelState.AddModelError("Amount", apiResponse);
-                        //}
-                        //else if (apiResponse.ToLower().Contains("source"))
-                        //{
-                        //    ModelState.ClearValidationState("SourceAccount");
-                        //    ModelState.AddModelError("SourceAccount", apiResponse);
-                        //}
-                        //else if (apiResponse.ToLower().Contains("destination"))
-                        //{
-                        //    ModelState.ClearValidationState("DestinationAccount");
-                        //    ModelState.AddModelError("DestinationAccount", apiResponse);
-                        //}
-                        return View(vm);
-                    }
-                } 
-                // Redirect to AppUsers Page then call AppUserApi for content request
-                // Pass the AppUserContext object
-                return RedirectToAction(nameof(Users));
+                    // Redirect to AppUsers Page then call AppUserApi for content request
+                    // Pass the AppUserContext object
+                    return RedirectToAction(nameof(Users));
+                }
+                else
+                {
+                    return View(model);
+                }
             }
             catch (Exception e)
             {
@@ -145,7 +139,6 @@ namespace RAZSmartDesk.WebUI.Controllers
                     accessToken = jwt;
                 }
 
-
                 var vm = new UsersViewModel();
                 var list = new List<User>();
                 using (var httpClient = new HttpClient())
@@ -154,13 +147,11 @@ namespace RAZSmartDesk.WebUI.Controllers
 
                     //httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
                     //var content = new StringContent(request_json, Encoding.UTF8, "application/json");
-
                     //var authenticationBytes = Encoding.ASCII.GetBytes(accessToken);
                     //httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
                     //httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
                     //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                     //httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
 
                     var url = "http://" + HttpContext.Request.Host.Value + "/UsersApi/GetUsers/" + id.ToString();
                     if (Request.Host.Host == "localhost")
@@ -189,6 +180,18 @@ namespace RAZSmartDesk.WebUI.Controllers
         }
 
 
-
+        //public async Task<IActionResult> Logout()
+        //{
+        //    try
+        //    {
+        //        HttpContext.Session.Clear();
+        //        await HttpContext.SignOutAsync("ExampleSession");
+        //        return RedirectToAction("Index", "Login");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
     }
 }

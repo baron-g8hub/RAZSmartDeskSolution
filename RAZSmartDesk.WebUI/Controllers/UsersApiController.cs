@@ -11,6 +11,8 @@ using RAZSmartDesk.WebUI.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using static Dapper.SqlMapper;
+using Microsoft.AspNetCore.Authentication;
 
 namespace RAZSmartDesk.WebUI.Controllers
 {
@@ -227,6 +229,8 @@ namespace RAZSmartDesk.WebUI.Controllers
 
             return token;
         }
+
+     
 
         #endregion
     }

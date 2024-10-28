@@ -13,25 +13,19 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Entity.UserId)
+                UserId
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Entity.UserCompanyId)
+                Username
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Entity.UserTypeId)
+               Password
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Username)
+             UserType
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Password)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Entity.UserTypeName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Entity.UserTypeLevel)
+              Company
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Entity.IsActive)
@@ -48,7 +42,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Entity.UpdatedDate)
             </th>
-            <th></th>
+            <th> Options </th>
         </tr>
     </thead>
     <tbody>
@@ -56,12 +50,6 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserCompanyId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserTypeId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Username)
@@ -73,7 +61,7 @@
                 @Html.DisplayFor(modelItem => item.UserTypeName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UserTypeLevel)
+                @Html.DisplayFor(modelItem => item.CompanyName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsActive)

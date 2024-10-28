@@ -13,6 +13,9 @@ namespace RAZSmartDesk.Entities
         public int UserTypeId { get; set; }
         public string? Username { get; set; }
         public string? Password { get; set; }
+
+        public string? CompanyName { get; set; }
+
         public string? UserTypeName { get; set; }
         public int UserTypeLevel { get; set; } = 0;
 

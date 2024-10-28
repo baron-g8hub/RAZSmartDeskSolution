@@ -1,7 +1,7 @@
 ﻿@model RAZSmartDesk.WebUI.Models.LoginModel
 
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Users";
     Layout = "_LayoutLogin";
 }
 
@@ -18,7 +18,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" value="Password" class="form-control" />
+                <input asp-for="Password" value="Password1" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
