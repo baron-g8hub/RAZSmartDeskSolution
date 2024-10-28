@@ -60,46 +60,46 @@ namespace RAZSmartDesk.WebUI.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        [Authorize]
-        public async Task<ActionResult<User>> GetUsers(string id)
-        {
-            var handler = new JwtSecurityTokenHandler();
-            string authHeader = Request.Headers["Authorization"];
-            authHeader = authHeader.Replace("Bearer ", "");
-            var jsonToken = handler.ReadToken(authHeader);
-            var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-            var userId = tokenS.Claims.First(claim => claim.Type == "nameidentifier").Value;
+        //[HttpGet("{id}")]
+        //[Authorize]
+        //public async Task<ActionResult<User>> GetUsers(string id)
+        //{
+        //    //var handler = new JwtSecurityTokenHandler();
+        //    //string authHeader = Request.Headers["Authorization"];
+        //    //authHeader = authHeader.Replace("Bearer ", "");
+        //    //var jsonToken = handler.ReadToken(authHeader);
+        //    //var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+        //    //var userId = tokenS.Claims.First(claim => claim.Type == "username").Value;
 
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+        //    try
+        //    {
+        //        if (!ModelState.IsValid)
+        //            return BadRequest(ModelState);
 
-                var entity = await _usersRepository.FindByUserIdAsync(Int32.Parse(id));
-                if (entity == null)
-                {
-                    return NotFound("User not found.");
-                }
-                return Ok(entity);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(400, ex.Message);
-            }
-        }
+        //        var entity = await _usersRepository.FindByUserIdAsync(Int32.Parse(id));
+        //        if (entity == null)
+        //        {
+        //            return NotFound("User not found.");
+        //        }
+        //        return Ok(entity);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(400, ex.Message);
+        //    }
+        //}
 
 
         [HttpGet("{companyId}")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers(int companyId)
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers(string companyId)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var entity = await _usersRepository.GetAppUsersByCompanyIdAsync(companyId);
+                var entity = await _usersRepository.GetAppUsersByCompanyIdAsync(int.Parse(companyId));
                 if (entity == null)
                 {
                     return NotFound("Users not found.");
@@ -211,11 +211,8 @@ namespace RAZSmartDesk.WebUI.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, userId),
-                // Add additional claims as needed (e.g., roles, etc.)
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("Username", userId)
-                //new Claim(ClaimTypes.Role, appUser.UserTypeName),
-                //new Claim(ClaimTypes.NameIdentifier, userId)
             };
 
             // Create a JWT

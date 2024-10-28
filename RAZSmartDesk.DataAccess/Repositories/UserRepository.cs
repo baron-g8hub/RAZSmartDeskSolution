@@ -23,7 +23,7 @@ namespace RAZSmartDesk.DataAccess.Repositories
 
         public async Task<IEnumerable<User>> GetAppUsersByCompanyIdAsync(int companyId)
         {
-            const string query = "SELECT * FROM AppUsers WHERE CompanyEmployeeId = @companyId ";
+            const string query = "SELECT * FROM Users WHERE UserCompanyId = @companyId ";
 
             using var connection = _context.CreateConnection();
             return await connection.QueryAsync<User>(query, new { companyId });
