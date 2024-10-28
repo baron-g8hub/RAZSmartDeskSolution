@@ -34,22 +34,22 @@ namespace RAZSmartDesk.WebUI.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<User>> GetUser()
+        public async Task<ActionResult<User>> GetUser(int id)
         {
-            var handler = new JwtSecurityTokenHandler();
-            string authHeader = Request.Headers["Authorization"];
-            authHeader = authHeader.Replace("Bearer ", "");
-            //var jsonToken = handler.ReadToken(authHeader);
-            var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-            var userId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
+            //var handler = new JwtSecurityTokenHandler();
+            //string authHeader = Request.Headers["Authorization"];
+            //authHeader = authHeader.Replace("Bearer ", "");
+            ////var jsonToken = handler.ReadToken(authHeader);
+            //var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+            //var userId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var entity = await _usersRepository.FindByUserIdAsync(int.Parse(userId));
+                var entity = await _usersRepository.FindByUserIdAsync((id));
                 if (entity == null)
                 {
                     return NotFound("User not found.");
@@ -95,6 +95,7 @@ namespace RAZSmartDesk.WebUI.Controllers
 
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Post([FromBody] User model)
         {
             try
@@ -125,6 +126,7 @@ namespace RAZSmartDesk.WebUI.Controllers
 
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Add([FromBody] User entity)
         {
             try
@@ -141,7 +143,7 @@ namespace RAZSmartDesk.WebUI.Controllers
                     return BadRequest(ModelState);
                 }
                 var result = await _usersRepository.AddAsync(entity);
-                if (result != null )
+                if (result != null)
                 {
                     //  result = entity.Username + " account created successfully.";
                     //return CreatedAtAction("GetUers", new { userId = entity.UserId });
@@ -151,6 +153,68 @@ namespace RAZSmartDesk.WebUI.Controllers
                 {
                     return BadRequest(result);
                 }
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(400, ex.Message);
+            }
+        }
+
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Update([FromBody] User entity)
+        {
+            try
+            {
+                //var handler = new JwtSecurityTokenHandler();
+                //string authHeader = Request.Headers["Authorization"];
+                //authHeader = authHeader.Replace("Bearer ", "");
+                ////var jsonToken = handler.ReadToken(authHeader);
+                //var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+                //var userId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
+             
+                var result = await _usersRepository.UpdateAsync(entity);
+                if (result != null)
+                {
+                    //  result = entity.Username + " account created successfully.";
+                    //return CreatedAtAction("GetUers", new { userId = entity.UserId });
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(400, ex.Message);
+            }
+        }
+
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteById(int id)
+        {
+            try
+            {
+                var entity = new User();
+                entity = await _usersRepository.FindByUserIdAsync(id);
+                if (entity != null)
+                {
+                    var result = await _usersRepository.RemoveAsync(entity);
+                    if (result != null)
+                    {
+                        var response = "User deleted successfully.";
+                        return Ok(response);
+                    }
+                    else
+                    {
+                        return BadRequest(result);
+                    }
+                }
+                return Ok();
             }
             catch (Exception ex)
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -117,7 +118,7 @@ namespace RAZSmartDesk.DataAccess.Repositories
         // TODO: Apply Stored Procedure when Adding multiple users
         public async Task<User> AddAsync(User model)
         {
-            var sql = @"INSERT INTO [dbo].[Users]  ([UserCompanyId]
+            const string query = @"INSERT INTO [dbo].[Users]  ([UserCompanyId]
                                                    ,[UserTypeId]
                                                    ,[Username]
                                                    ,[Password]
@@ -138,20 +139,47 @@ namespace RAZSmartDesk.DataAccess.Repositories
                                                    ,@UpdatedDate)";
 
             using var connection = _context.CreateConnection();
-            await connection.ExecuteAsync(sql, model);
+            await connection.ExecuteAsync(query, model);
             return model;
         }
 
-        public Task<User> RemoveAsync(User model)
+
+
+        public async Task<User> UpdateAsync(User model)
         {
-            throw new NotImplementedException();
+            model.UpdatedDate = DateTime.UtcNow;
+            const string query = @"UPDATE [dbo].[Users] SET UserTypeId = @UserTypeId
+                                                  ,Username = @Username
+                                                  ,Password = @Password
+                                                  ,IsActive = @IsActive
+                                                  ,UpdatedBy = @UpdatedBy
+                                                  ,UpdatedDate = GetUTCDate()
+                                             WHERE UserId = @UserId";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("UserId", model.UserId, DbType.Int32);
+            parameters.Add("UserTypeId", model.UserTypeId, DbType.Int32);
+            parameters.Add("Username", model.Username, DbType.String);
+            parameters.Add("Password", model.Password, DbType.String);
+            parameters.Add("UpdatedBy", model.UpdatedBy, DbType.String);
+            parameters.Add("IsActive", model.IsActive, DbType.Boolean);
+
+            using var connection = _context.CreateConnection();
+            await connection.ExecuteAsync(query, parameters);
+            return model;
         }
 
-        public Task<User> UpdateAsync(User model)
+        public async Task<User> RemoveAsync(User model)
         {
-            throw new NotImplementedException();
-        }
+            var id = model.UserId;
 
+            const string query = @"DELETE FROM [dbo].[Users] WHERE UserId=@id";
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, new { id });
+            }
+            return model;
+        }
 
     }
 }

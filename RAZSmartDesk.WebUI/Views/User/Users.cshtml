@@ -100,10 +100,15 @@
                 </td>
                 @if (Model.Entity.UserTypeId == 1)
                 {
-                    <td scope="row">
-                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    <td scope="row" style="text-align: center;">
+                        <a asp-controller="User" asp-action="Create" asp-route-id="@item.UserId">Edit</a> |
                         @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                        <a asp-controller="User" asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
+                        @* <form method="post">
+                            <a class="btn btn-sm btn-outline-primary" asp-controller="User" asp-action="Create" asp-route-id="@item.UserId">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </form> *@
                     </td>
                 }
             </tr>

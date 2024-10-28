@@ -8,6 +8,7 @@ namespace RAZSmartDesk.WebUI.Models
     {
         public UsersViewModel()
         {
+            UserViewModelId = 0;
             UserTypeId = 0;
             Entity = new User();
             EntityList = new List<User>();
@@ -22,7 +23,7 @@ namespace RAZSmartDesk.WebUI.Models
         {
             var types = new List<SelectListItem>()
             {
-                new SelectListItem { Value = "0", Text = "SELECT", Selected = true},
+                new SelectListItem { Value = "0", Text = "-Select-", Selected = true},
                 new SelectListItem { Value = "1", Text = "ADMIN" },
                 new SelectListItem { Value = "2", Text = "FLAT" },
             };
@@ -31,6 +32,7 @@ namespace RAZSmartDesk.WebUI.Models
 
         public int ApplicationUserId { get; set; }
 
+        public int UserViewModelId { get; set; }
 
         public int UserTypeId { get; set; }
 
