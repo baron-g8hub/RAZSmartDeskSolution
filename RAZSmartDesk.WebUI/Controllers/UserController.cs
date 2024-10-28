@@ -37,8 +37,6 @@ namespace RAZSmartDesk.WebUI.Controllers
             // Check for existing token then assign to values to AppUserContext
             var vm = new LoginModel();
 
-
-
             // var appUser = _repository.FindByUsernamePasswordAsync(model.Username, model.Password);
             vm.Password = "";
             vm.Username = "";
@@ -417,7 +415,7 @@ namespace RAZSmartDesk.WebUI.Controllers
         //    try
         //    {
         //        HttpContext.Session.Clear();
-        //        await HttpContext.SignOutAsync("ExampleSession");
+        //        await HttpContext.SignOutAsync("JWToken");
         //        return RedirectToAction("Index", "Login");
         //    }
         //    catch (Exception ex)
