@@ -8,6 +8,7 @@ namespace RAZSmartDesk.WebUI.Models
     {
         public UsersViewModel()
         {
+            UserTypeId = 0;
             Entity = new User();
             EntityList = new List<User>();
             SelectListUserTypes = LoadUserTypes();
@@ -21,16 +22,22 @@ namespace RAZSmartDesk.WebUI.Models
         {
             var types = new List<SelectListItem>()
             {
+                new SelectListItem { Value = "0", Text = "SELECT", Selected = true},
                 new SelectListItem { Value = "1", Text = "ADMIN" },
                 new SelectListItem { Value = "2", Text = "FLAT" },
             };
             return types;
         }
 
-
         public int ApplicationUserId { get; set; }
 
+
+        public int UserTypeId { get; set; }
+
         public int CompanyId { get; set; }
+
+        public string UserTypeName { get; set; }
+
 
         [Required]
         [Display(Name = "Company Name")]
@@ -43,5 +50,12 @@ namespace RAZSmartDesk.WebUI.Models
         [Required]
         [Display(Name = "Password")]
         public string Password { get; set; }
+
+
+        public bool IsActive { get; set; }
+        public string? CreatedBy { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public string? UpdatedBy { get; set; }
+        public DateTime UpdatedDate { get; set; }
     }
 }

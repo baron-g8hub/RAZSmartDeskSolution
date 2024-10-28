@@ -16,7 +16,7 @@ var configuration = new ConfigurationBuilder()
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.IdleTimeout = TimeSpan.FromMinutes(5);
 });
 
 //Add JWT authentication

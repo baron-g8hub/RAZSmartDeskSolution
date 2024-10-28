@@ -23,6 +23,7 @@ namespace RAZSmartDesk.WebUI.Controllers
         private readonly IConfiguration _configuration;
         private readonly IAppUserRepository _usersRepository;
         private readonly ICompanyRepository _companyRepository;
+
         public static Dictionary<string, string> RefreshTokens = new Dictionary<string, string>();
 
         public UsersApiController(IConfiguration configuration, IAppUserRepository repository, ICompanyRepository companyRepository)
@@ -35,21 +36,20 @@ namespace RAZSmartDesk.WebUI.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<User>> GetUsers()
+        public async Task<ActionResult<User>> GetUser()
         {
-            //var handler = new JwtSecurityTokenHandler();
-            //string authHeader = Request.Headers["Authorization"];
-            ////authHeader = authHeader.Replace("Bearer ", "");
+            var handler = new JwtSecurityTokenHandler();
+            string authHeader = Request.Headers["Authorization"];
+            authHeader = authHeader.Replace("Bearer ", "");
             //var jsonToken = handler.ReadToken(authHeader);
-            //var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-            //var userId = tokenS.Claims.First(claim => claim.Type == "nameidentifier").Value;
-
+            var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+            var userId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var entity = await _usersRepository.FindByUserIdAsync(1);
+                var entity = await _usersRepository.FindByUserIdAsync(int.Parse(userId));
                 if (entity == null)
                 {
                     return NotFound("User not found.");
@@ -62,50 +62,29 @@ namespace RAZSmartDesk.WebUI.Controllers
             }
         }
 
-        //[HttpGet("{id}")]
-        //[Authorize]
-        //public async Task<ActionResult<User>> GetUsers(string id)
-        //{
-        //    //var handler = new JwtSecurityTokenHandler();
-        //    //string authHeader = Request.Headers["Authorization"];
-        //    //authHeader = authHeader.Replace("Bearer ", "");
-        //    //var jsonToken = handler.ReadToken(authHeader);
-        //    //var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-        //    //var userId = tokenS.Claims.First(claim => claim.Type == "username").Value;
 
-        //    try
-        //    {
-        //        if (!ModelState.IsValid)
-        //            return BadRequest(ModelState);
-
-        //        var entity = await _usersRepository.FindByUserIdAsync(Int32.Parse(id));
-        //        if (entity == null)
-        //        {
-        //            return NotFound("User not found.");
-        //        }
-        //        return Ok(entity);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(400, ex.Message);
-        //    }
-        //}
-
-
-        [HttpGet("{companyId}/{userTypeId}")]
+        [HttpGet("{userId}")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers(string companyId, string userTypeId)
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers(string userId)
         {
             try
             {
+                //var handler = new JwtSecurityTokenHandler();
+                //string authHeader = Request.Headers["Authorization"];
+                //authHeader = authHeader.Replace("Bearer ", "");
+                //var jsonToken = handler.ReadToken(authHeader);
+                //var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+                //var userId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var entity = await _usersRepository.GetAppUsersByCompanyIdAsync(int.Parse(companyId), int.Parse(userTypeId));
-                if (entity == null)
+                var user = await _usersRepository.FindByUserIdAsync(int.Parse(userId));
+                if (user == null)
                 {
                     return NotFound("Users not found.");
                 }
+                var entity = await _usersRepository.GetAppUsersByCompanyIdAsync(user.UserCompanyId, user.UserTypeId);
                 return Ok(entity);
             }
             catch (Exception ex)
@@ -157,7 +136,7 @@ namespace RAZSmartDesk.WebUI.Controllers
             {
                 if (model.Username == appUser.Username || model.Password == appUser.Password)
                 {
-                    var token = GenerateAccessToken(model.Username);
+                    var token = GenerateAccessToken(appUser.UserId.ToString());
                     // Generate refresh token
                     var refreshToken = Guid.NewGuid().ToString();
 

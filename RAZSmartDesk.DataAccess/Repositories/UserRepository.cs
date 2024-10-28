@@ -21,7 +21,7 @@ namespace RAZSmartDesk.DataAccess.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<User>> GetAppUsersByCompanyIdAsync(int companyId, int userTypeId)
+        public async Task<IEnumerable<User?>> GetAppUsersByCompanyIdAsync(int companyId, int userTypeId)
         {
             using var connection = _context.CreateConnection();
             if (userTypeId == 1)
@@ -68,7 +68,24 @@ namespace RAZSmartDesk.DataAccess.Repositories
 
         public async Task<User?> FindByUserIdAsync(int id)
         {
-            const string query = "SELECT * FROM [Users] WHERE UserId=@id";
+            const string query = @"SELECT a.[UserId]
+                                          ,a.UserTypeId
+                                          ,a.Username
+	                                      ,a.Password
+	                                      ,b.CompanyName
+                                          ,a.UserCompanyId
+	                                      ,c.UserTypeName
+                                          ,a.[IsActive]
+                                          ,a.[CreatedBy]
+                                          ,a.[CreatedDate]
+                                          ,a.[UpdatedBy]
+                                          ,a.[UpdatedDate]
+                                      FROM [Users] as a
+                                      INNER JOIN Companies as b
+                                      ON a.UserCompanyId = b.CompanyId 
+                                      INNER JOIN UserTypes as c
+                                      ON  a.UserTypeId = c.UserTypeId
+                                      WHERE a.UserId=@id";
 
             using var connection = _context.CreateConnection();
             var result = await connection.QuerySingleOrDefaultAsync<User>(query, new { id });
