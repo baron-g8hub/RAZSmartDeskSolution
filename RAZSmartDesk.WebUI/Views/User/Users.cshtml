@@ -4,47 +4,63 @@
     ViewData["Title"] = "Users";
 }
 
-<h1>@Model.CompanyName Users</h1>
+<h4><h1>@Model.CompanyName  <span>List of Users</span> </h1></h4>
+<hr />
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
+@if (Model.Entity.UserTypeId == 1)
+{
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="btn btn-primary btn-sm" asp-controller="User" asp-action="Create">
+                <i class="fas fa-circle-plus"></i>
+                User
+            </a>
+        </li>
+        @* <li class="nav-item" style="padding-top: 0px; padding-right: 5px; padding-bottom: 10px; padding-left: 5px;">
+        <a class="btn btn-primary btn-sm" asp-controller="Transactions" asp-action="Transfer">
+            <i class="fas fa-copy"></i>
+            Transfer
+        </a>
+    </li> *@
+    </ul>
+}
+
+<table class="table table-bordered table-sm">
+    <thead class="table-light">
         <tr>
-            <th>
+            <th scope="col">
                 UserId
             </th>
-            <th>
+            <th scope="col">
                 Username
             </th>
-            <th>
+            <th scope="col">
                 Password
             </th>
-            <th>
+            <th scope="col">
                 UserType
             </th>
-            <th>
+            <th scope="col">
                 Company
             </th>
-            <th>
+            <th scope="col">
                 @Html.DisplayNameFor(model => model.Entity.IsActive)
             </th>
-            <th>
+            <th scope="col">
                 @Html.DisplayNameFor(model => model.Entity.CreatedBy)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Entity.CreatedDate)
             </th>
-            <th>
+            <th scope="col">
                 @Html.DisplayNameFor(model => model.Entity.UpdatedBy)
             </th>
-            <th>
+            <th scope="col">
                 @Html.DisplayNameFor(model => model.Entity.UpdatedDate)
             </th>
             @if (Model.Entity.UserTypeId == 1)
             {
-                <th> Options </th>
+                <th scope="col"> Options </th>
             }
         </tr>
     </thead>
@@ -52,39 +68,39 @@
         @foreach (var item in Model.EntityList)
         {
             <tr>
-                <td>
+                <td scope="row">
                     @Html.DisplayFor(modelItem => item.UserId)
                 </td>
-                <td>
+                <td scope="row">
                     @Html.DisplayFor(modelItem => item.Username)
                 </td>
-                <td>
+                <td scope="row">
                     @Html.DisplayFor(modelItem => item.Password)
                 </td>
-                <td>
+                <td scope="row">
                     @Html.DisplayFor(modelItem => item.UserTypeName)
                 </td>
-                <td>
+                <td scope="row">
                     @Html.DisplayFor(modelItem => item.CompanyName)
                 </td>
-                <td>
+                <td scope="row">
                     @Html.DisplayFor(modelItem => item.IsActive)
                 </td>
-                <td>
+                <td scope="row">
                     @Html.DisplayFor(modelItem => item.CreatedBy)
                 </td>
-                <td>
+                <td scope="row">
                     @Html.DisplayFor(modelItem => item.CreatedDate)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.UpdatedBy)
                 </td>
-                <td>
+                <td scope="row">
                     @Html.DisplayFor(modelItem => item.UpdatedDate)
                 </td>
                 @if (Model.Entity.UserTypeId == 1)
                 {
-                    <td>
+                    <td scope="row">
                         @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
                         @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                         @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })

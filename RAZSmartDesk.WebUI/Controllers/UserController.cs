@@ -18,13 +18,13 @@ using Microsoft.AspNetCore.Authentication;
 
 namespace RAZSmartDesk.WebUI.Controllers
 {
-    public class LoginController : Controller
+    public class UserController : Controller
     {
         private readonly IAppUserRepository _repository;
 
         public static Dictionary<string, string> RefreshTokens = new Dictionary<string, string>();
 
-        public LoginController(IAppUserRepository repository)
+        public UserController(IAppUserRepository repository)
         {
             _repository = repository;
         }
@@ -83,8 +83,8 @@ namespace RAZSmartDesk.WebUI.Controllers
                                 tokenModel = JsonConvert.DeserializeObject<TokenModel>(apiResponse);
                                 HttpContext.Session.SetString("JWToken", tokenModel.AccessToken);
                             }
-                            return RedirectToAction("Users", "Login", new { userId = entity.UserId});
-                            //return RedirectToAction(nameof(Users));
+                            //return RedirectToAction("Users", "User");
+                            return RedirectToAction(nameof(Users));
                         }
                         else
                         {
@@ -128,7 +128,7 @@ namespace RAZSmartDesk.WebUI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Users(string userId)
+        public async Task<IActionResult> Users()
         {
             try
             {
@@ -157,6 +157,7 @@ namespace RAZSmartDesk.WebUI.Controllers
                             vm.CompanyId = vm.Entity.UserCompanyId;
                             vm.CompanyName = vm.Entity.CompanyName;
                             vm.UserTypeName = vm.UserTypeName;
+                            vm.ApplicationUserId = vm.Entity.UserId;
                         }
                         else
                         {
@@ -167,10 +168,10 @@ namespace RAZSmartDesk.WebUI.Controllers
                 using (var httpClient = new HttpClient())
                 {
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                    var url = "http://" + HttpContext.Request.Host.Value + "/UsersApi/GetUsers/" + userId;
+                    var url = "http://" + HttpContext.Request.Host.Value + "/UsersApi/GetUsers/" + vm.ApplicationUserId;
                     if (Request.Host.Host == "localhost")
                     {
-                        url = "https://" + HttpContext.Request.Host.Value + "/UsersApi/GetUsers/" + userId;
+                        url = "https://" + HttpContext.Request.Host.Value + "/UsersApi/GetUsers/" + vm.ApplicationUserId;
                     }
                     using (var response = await httpClient.GetAsync(url))
                     {
@@ -239,7 +240,7 @@ namespace RAZSmartDesk.WebUI.Controllers
                         if (result.IsSuccessStatusCode)
                         {
                             response = result.StatusCode.ToString();
-                            return RedirectToAction("Users", "Login", new { id = entity.UserCompanyId, userTypeId = entity.UserTypeId });
+                            return RedirectToAction("Users", "User", new { id = entity.UserId});
                            // return RedirectToAction(nameof(Users));
                         }
                         else
@@ -268,7 +269,49 @@ namespace RAZSmartDesk.WebUI.Controllers
         }
 
 
-     
+        public async Task<ActionResult> Create()
+        {
+            var id = RouteData.Values["id"];
+            var vm = new UsersViewModel();
+            ViewBag.accountTypes = vm.LoadUserTypes();
+            var jwt = HttpContext.Session.GetString("JWToken");
+            string accessToken = string.Empty;
+            if (!string.IsNullOrEmpty(jwt))
+            {
+                accessToken = jwt;
+            }
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                var url = "http://" + HttpContext.Request.Host.Value + "/UsersApi/GetUser/";
+                if (Request.Host.Host == "localhost")
+                {
+                    url = "https://" + HttpContext.Request.Host.Value + "/UsersApi/GetUser/";
+                }
+                using (var response = await httpClient.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string apiResponse = await response.Content.ReadAsStringAsync();
+                        vm.Entity = JsonConvert.DeserializeObject<User>(apiResponse);
+                        vm.CompanyId = vm.Entity.UserCompanyId;
+                        vm.CompanyName = vm.Entity.CompanyName;
+                        vm.UserTypeName = vm.Entity.CompanyName;
+                        vm.ApplicationUserId = vm.Entity.UserId;
+                        vm.CreatedBy = vm.Entity.Username;
+                        
+                        return View(vm);
+                    }
+                    else
+                    {
+                        string apiResponse = await response.Content.ReadAsStringAsync();
+                    }
+                }
+            }
+            return View(vm);
+        }
+
+
 
         //public async Task<IActionResult> Logout()
         //{
