@@ -124,6 +124,40 @@ namespace RAZSmartDesk.WebUI.Controllers
         }
 
 
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody] User entity)
+        {
+            try
+            {
+                //var handler = new JwtSecurityTokenHandler();
+                //string authHeader = Request.Headers["Authorization"];
+                //authHeader = authHeader.Replace("Bearer ", "");
+                ////var jsonToken = handler.ReadToken(authHeader);
+                //var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+                //var userId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
+
+                if (!ModelState.IsValid || (entity.UserTypeName == "" || entity.Username == "string"))
+                {
+                    return BadRequest(ModelState);
+                }
+                var result = await _usersRepository.AddAsync(entity);
+                if (result != null )
+                {
+                    //  result = entity.Username + " account created successfully.";
+                    //return CreatedAtAction("GetUers", new { userId = entity.UserId });
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(400, ex.Message);
+            }
+        }
+
 
         #region Authenticate User
 

@@ -115,9 +115,31 @@ namespace RAZSmartDesk.DataAccess.Repositories
         }
 
         // TODO: Apply Stored Procedure when Adding multiple users
-        public Task<User> AddAsync(User model)
+        public async Task<User> AddAsync(User model)
         {
-            throw new NotImplementedException();
+            var sql = @"INSERT INTO [dbo].[Users]  ([UserCompanyId]
+                                                   ,[UserTypeId]
+                                                   ,[Username]
+                                                   ,[Password]
+                                                   ,[IsActive]
+                                                   ,[CreatedBy]
+                                                   ,[CreatedDate]
+                                                   ,[UpdatedBy]
+                                                   ,[UpdatedDate])
+                                             VALUES
+                                                   (@UserCompanyId
+                                                   ,@UserTypeId
+                                                   ,@Username
+                                                   ,@Password
+                                                   ,@IsActive
+                                                   ,@CreatedBy
+                                                   ,@CreatedDate
+                                                   ,@UpdatedBy
+                                                   ,@UpdatedDate)";
+
+            using var connection = _context.CreateConnection();
+            await connection.ExecuteAsync(sql, model);
+            return model;
         }
 
         public Task<User> RemoveAsync(User model)

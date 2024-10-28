@@ -195,80 +195,6 @@ namespace RAZSmartDesk.WebUI.Controllers
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Users(UsersViewModel model)
-        {
-            try
-            {
-                try
-                {
-                    var entity = new User();
-                    entity.UserCompanyId = model.CompanyId;
-                    entity.Username = model.Username;
-                    entity.Password = model.Password;
-                    entity.CreatedBy = model.CreatedBy;
-                    entity.CreatedDate = model.CreatedDate; 
-                    entity.UpdatedBy = model.UpdatedBy;
-                    entity.UpdatedDate = model.UpdatedDate;
-                    entity.IsActive = model.IsActive;
-                    entity.UserTypeId = model.UserTypeId;
-                    var response = string.Empty;
-                    using (var httpClient = new HttpClient())
-                    {
-                        var url = "http://" + HttpContext.Request.Host.Value;
-                        if (Request.Host.Host == "localhost")
-                        {
-                            url = "https://" + HttpContext.Request.Host.Value;
-                        }
-                        if (model.ApplicationUserId != 0 || entity.UserId != 0)
-                        {
-                            entity.UserId = model.ApplicationUserId;
-                            entity.UserCompanyId = model.CompanyId;
-                            url += "/UsersApi/Update";
-                        }
-                        else
-                        {
-                            url += "/UsersApi/Add";
-                        }
-
-                        var myContent = JsonConvert.SerializeObject(entity);
-                        var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
-                        var byteContent = new ByteArrayContent(buffer);
-                        byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                        HttpResponseMessage result = await httpClient.PostAsync(url, byteContent);
-                        if (result.IsSuccessStatusCode)
-                        {
-                            response = result.StatusCode.ToString();
-                            return RedirectToAction("Users", "User", new { id = entity.UserId});
-                           // return RedirectToAction(nameof(Users));
-                        }
-                        else
-                        {
-                            string apiResponse = await result.Content.ReadAsStringAsync();
-                            if (apiResponse.ToLower().Contains("duplicate"))
-                            {
-                                ModelState.ClearValidationState("AccountName");
-                                ModelState.AddModelError("AccountName", apiResponse);
-                            }
-                            //ViewBag.accountTypes = model.LoadAccountTypes();
-                            return View();
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-
         public async Task<ActionResult> Create()
         {
             var id = RouteData.Values["id"];
@@ -299,7 +225,7 @@ namespace RAZSmartDesk.WebUI.Controllers
                         vm.UserTypeName = vm.Entity.CompanyName;
                         vm.ApplicationUserId = vm.Entity.UserId;
                         vm.CreatedBy = vm.Entity.Username;
-                        
+                        vm.Entity.UserId = 0;
                         return View(vm);
                     }
                     else
@@ -312,6 +238,79 @@ namespace RAZSmartDesk.WebUI.Controllers
         }
 
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(UsersViewModel model)
+        {
+            try
+            {
+                try
+                {
+                    var entity = new User();
+                    entity.UserCompanyId = model.ApplicationUserId;
+                    entity.Username = model.Username;
+                    entity.Password = model.Password;
+                    entity.CreatedBy = model.CreatedBy;
+                    entity.CreatedDate = model.CreatedDate;
+                    entity.UpdatedBy = model.UpdatedBy;
+                    entity.UpdatedDate = model.UpdatedDate;
+                    entity.IsActive = model.IsActive;
+                    entity.UserTypeId = model.UserTypeId;
+                    var response = string.Empty;
+                    using (var httpClient = new HttpClient())
+                    {
+                        var url = "http://" + HttpContext.Request.Host.Value;
+                        if (Request.Host.Host == "localhost")
+                        {
+                            url = "https://" + HttpContext.Request.Host.Value;
+                        }
+                        if (entity.UserId != 0)
+                        {
+                            entity.UserId = model.ApplicationUserId;
+                            entity.UserCompanyId = model.CompanyId;
+                            url += "/UsersApi/Update";
+                        }
+                        else
+                        {
+                            entity.UpdatedBy = model.CreatedBy;
+                            entity.UpdatedDate = DateTime.Now;
+                            url += "/UsersApi/Add";
+                        }
+                        var myContent = JsonConvert.SerializeObject(entity);
+                        var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
+                        var byteContent = new ByteArrayContent(buffer);
+                        byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        HttpResponseMessage result = await httpClient.PostAsync(url, byteContent);
+                        if (result.IsSuccessStatusCode)
+                        {
+                            response = result.StatusCode.ToString();
+                            return RedirectToAction("Users", "User", new { id = entity.UserId });
+                            // return RedirectToAction(nameof(Users));
+                        }
+                        else
+                        {
+                            string apiResponse = await result.Content.ReadAsStringAsync();
+                            if (apiResponse.ToLower().Contains("duplicate"))
+                            {
+                                ModelState.ClearValidationState("AccountName");
+                                ModelState.AddModelError("AccountName", apiResponse);
+                            }
+                            //ViewBag.accountTypes = model.LoadAccountTypes();
+                            return View(model);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         //public async Task<IActionResult> Logout()
         //{
