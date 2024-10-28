@@ -13,11 +13,14 @@ using System.Security.Claims;
 using System.Text;
 using static Dapper.SqlMapper;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace RAZSmartDesk.WebUI.Controllers
 {
+
     [Route("[controller]/[action]")]
     [ApiController]
+    [EnableRateLimiting("fixed")]
     public class UsersApiController : ControllerBase
     {
         private readonly IConfiguration _configuration;

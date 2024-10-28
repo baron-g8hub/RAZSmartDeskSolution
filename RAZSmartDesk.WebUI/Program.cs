@@ -5,6 +5,7 @@ using RAZSmartDesk.DataAccess.DapperDBContext;
 using RAZSmartDesk.DataAccess.Repositories;
 using RAZSmartDesk.DataAccess.Repositories.IRepositories;
 using System.Text;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,16 @@ var configuration = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .Build();
+
+builder.Services.AddRateLimiter(rateLimiterOptions =>
+{
+    rateLimiterOptions.AddFixedWindowLimiter("fixed", options =>
+    {
+        options.PermitLimit = 1;
+        options.Window = TimeSpan.FromSeconds(5);
+        options.QueueLimit = 10;
+    });
+});
 
 builder.Services.AddSession(options =>
 {
@@ -45,36 +56,6 @@ builder.Services.AddTransient<DapperDbContext, DapperDbContext>();
 builder.Services.AddTransient<IAppUserRepository, UserRepository>();
 builder.Services.AddTransient<ICompanyRepository, CompanyRepository>();
 
-
-//builder.Services.AddSwaggerGen(options =>
-//{
-//    options.SwaggerDoc("v1", new OpenApiInfo
-//    {
-//        Version = "v1",
-//        Title = ".NetCore8 API with Dapper by: BLugtu",
-//        Description = "Web Api with views and Swagger UI.",
-//    });
-//    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-//    {
-//        In = ParameterLocation.Header,
-//        Description = "Please insert JWT with Bearer into field",
-//        Name = "Authorization",
-//        Type = SecuritySchemeType.ApiKey
-//    });
-//    options.AddSecurityRequirement(new OpenApiSecurityRequirement {
-//        {
-//            new OpenApiSecurityScheme
-//            {
-//                Reference = new OpenApiReference
-//                {
-//                    Type = ReferenceType.SecurityScheme,
-//                    Id = "Bearer"
-//                }
-//            },
-//            new string[] { }
-//        }
-//    });
-//});
 
 builder.Services.AddSwaggerGen(setup =>
 {
@@ -127,6 +108,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+app.UseRateLimiter();
 app.UseStaticFiles();
 app.UseRouting();
 
