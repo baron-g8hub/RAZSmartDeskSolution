@@ -130,10 +130,10 @@ namespace RAZSmartDesk.WebUI.Controllers
                 using (var httpClient = new HttpClient())
                 {
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                    var url = "http://" + HttpContext.Request.Host.Value + "/UsersApi/GetUser/" + id;
+                    var url = "http://" + HttpContext.Request.Host.Value + "/UsersApi/Get/" + id;
                     if (Request.Host.Host == "localhost")
                     {
-                        url = "https://" + HttpContext.Request.Host.Value + "/UsersApi/GetUser/" + id;
+                        url = "https://" + HttpContext.Request.Host.Value + "/UsersApi/Get/" + id;
                     }
                     using (var response = await httpClient.GetAsync(url))
                     {
@@ -152,13 +152,14 @@ namespace RAZSmartDesk.WebUI.Controllers
                         }
                     }
                 }
+                // *** start API Call to get all Users in the Company of the Application User
                 using (var httpClient = new HttpClient())
                 {
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                    var url = "http://" + HttpContext.Request.Host.Value + "/UsersApi/GetUsers/" + vm.ApplicationUserId;
+                    var url = "http://" + HttpContext.Request.Host.Value + "/UsersApi/Get";
                     if (Request.Host.Host == "localhost")
                     {
-                        url = "https://" + HttpContext.Request.Host.Value + "/UsersApi/GetUsers/" + vm.ApplicationUserId;
+                        url = "https://" + HttpContext.Request.Host.Value + "/UsersApi/Get";
                     }
                     using (var response = await httpClient.GetAsync(url))
                     {
@@ -173,6 +174,7 @@ namespace RAZSmartDesk.WebUI.Controllers
                         }
                     }
                 }
+                // *** end API Call to get all Users in the Company of the Application User
                 return View(vm);
             }
             catch (Exception ex)

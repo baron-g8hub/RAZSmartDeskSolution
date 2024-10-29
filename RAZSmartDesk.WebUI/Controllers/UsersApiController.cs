@@ -106,38 +106,6 @@ namespace RAZSmartDesk.WebUI.Controllers
         }
 
 
-        [HttpGet("{userId}")]
-        [Authorize]
-        [EnableRateLimiting("fixed")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers(string userId)
-        {
-            try
-            {
-                var handler = new JwtSecurityTokenHandler();
-                string authHeader = Request.Headers["Authorization"];
-                authHeader = authHeader.Replace("Bearer ", "");
-                var jsonToken = handler.ReadToken(authHeader);
-                var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-                var appUserId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
-
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                var user = await _usersRepository.FindByUserIdAsync(int.Parse(appUserId));
-                if (user == null)
-                {
-                    return NotFound("Users not found.");
-                }
-                var entity = await _usersRepository.GetAppUsersByCompanyIdAsync(user.UserCompanyId, user.UserTypeId);
-                return Ok(entity);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(400, ex.Message);
-            }
-        }
-
-
         [HttpPost]
         [Authorize]
         [EnableRateLimiting("fixed")]
