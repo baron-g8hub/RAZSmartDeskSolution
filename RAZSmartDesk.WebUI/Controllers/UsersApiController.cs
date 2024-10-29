@@ -186,15 +186,20 @@ namespace RAZSmartDesk.WebUI.Controllers
                 {
                     return NotFound("Application User not found. Return to login.");
                 }
-                entity.UpdatedBy = appUserEntity.Username;
-                entity.UpdatedDate = DateTime.UtcNow;
-                var result = await _usersRepository.UpdateAsync(entity);
-                if (result != null)
+
+                if (appUserEntity.UserTypeId == 1)
                 {
-                    var response = entity.Username + " user updated successfully.";
-                    return Ok(response);
+                    entity.UpdatedBy = appUserEntity.Username;
+                    entity.UpdatedDate = DateTime.UtcNow;
+                    var result = await _usersRepository.UpdateAsync(entity);
+                    if (result != null)
+                    {
+                        var response = entity.Username + " user updated successfully.";
+                        return Ok(response);
+                    }
+                    return BadRequest(result);
                 }
-                return BadRequest(result);
+                return NotFound("User not found.");
             }
             catch (Exception ex)
             {
