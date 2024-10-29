@@ -140,59 +140,32 @@ namespace RAZSmartDesk.WebUI.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Post([FromBody] User model)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                if (ModelState.IsValid)
-                {
-                    // 1. Check if CompanyId is valid.
-                    // var employee = await _companyRepository.FindAsync(model.CreatedBy);
-
-
-                    // 2. Check if Creator user role is valid.
-
-
-
-                    await _usersRepository.AddAsync(model);
-                    return Ok();
-                }
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(400, ex.Message);
-            }
-        }
-
-
-        [HttpPost]
-        [Authorize]
         [EnableRateLimiting("fixed")]
         public async Task<IActionResult> Add([FromBody] User entity)
         {
             try
             {
-                //var handler = new JwtSecurityTokenHandler();
-                //string authHeader = Request.Headers["Authorization"];
-                //authHeader = authHeader.Replace("Bearer ", "");
-                ////var jsonToken = handler.ReadToken(authHeader);
-                //var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-                //var userId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
+                var handler = new JwtSecurityTokenHandler();
+                string authHeader = Request.Headers["Authorization"];
+                authHeader = authHeader.Replace("Bearer ", "");
+                var jsonToken = handler.ReadToken(authHeader);
+                var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+                var appUserId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
 
-                if (!ModelState.IsValid || (entity.UserTypeName == "" || entity.Username == "string"))
-                {
+                if (!ModelState.IsValid)
                     return BadRequest(ModelState);
+
+                var appUserEntity = await _usersRepository.FindByUserIdAsync(int.Parse(appUserId));
+                if (appUserEntity == null)
+                {
+                    return NotFound("Application User not found. Return to login.");
                 }
+                entity.UserCompanyId = appUserEntity.UserCompanyId;
                 var result = await _usersRepository.AddAsync(entity);
                 if (result != null)
                 {
-                    //  result = entity.Username + " account created successfully.";
-                    //return CreatedAtAction("GetUers", new { userId = entity.UserId });
-                    return Ok(result);
+                    var  response = entity.Username + " user created successfully.";
+                    return Ok(response);
                 }
                 else
                 {
@@ -290,7 +263,7 @@ namespace RAZSmartDesk.WebUI.Controllers
                     //var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token.ToString());
                     //string userApp = jwt.Claims.First(c => c.Type == "Name").Value;
 
-                    return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token), RefreshToken = refreshToken });
+                    return Ok(new { AccessToken = new JwtSecurityTokenHandler().WriteToken(token), RefreshToken = refreshToken });
                 }
             }
 
@@ -319,7 +292,7 @@ namespace RAZSmartDesk.WebUI.Controllers
                 var token = GenerateAccessToken(userId);
 
                 // Return the new access token to the client
-                return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token) });
+                return Ok(new { AccessToken = new JwtSecurityTokenHandler().WriteToken(token) });
             }
 
             return BadRequest("Invalid refresh token");
