@@ -20,7 +20,7 @@ namespace RAZSmartDesk.WebUI.Controllers
 
     [Route("[controller]/[action]")]
     [ApiController]
-  
+
     public class UsersApiController : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -40,24 +40,25 @@ namespace RAZSmartDesk.WebUI.Controllers
         [HttpGet]
         [Authorize]
         [EnableRateLimiting("fixed")]
-        public async Task<ActionResult<User>> GetUser()
+        public async Task<ActionResult<User>> Get()
         {
             var handler = new JwtSecurityTokenHandler();
             string authHeader = Request.Headers["Authorization"];
             authHeader = authHeader.Replace("Bearer ", "");
             //var jsonToken = handler.ReadToken(authHeader);
             var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-            var userId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
+            var appUserId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var entity = await _usersRepository.FindByUserIdAsync(int.Parse(userId));
-                if (entity == null)
+                var appUserEntity = await _usersRepository.FindByUserIdAsync(int.Parse(appUserId));
+                if (appUserEntity == null)
                 {
                     return NotFound("User not found.");
                 }
+                var entity = await _usersRepository.GetAppUsersByCompanyIdAsync(appUserEntity.UserCompanyId, appUserEntity.UserTypeId);
                 return Ok(entity);
             }
             catch (Exception ex)
@@ -69,26 +70,34 @@ namespace RAZSmartDesk.WebUI.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<User>> Get(int id)
         {
             var handler = new JwtSecurityTokenHandler();
             string authHeader = Request.Headers["Authorization"];
             authHeader = authHeader.Replace("Bearer ", "");
             //var jsonToken = handler.ReadToken(authHeader);
             var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-            var userId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
+            var appUserId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-
+                var appUserEntity = await _usersRepository.FindByUserIdAsync(int.Parse(appUserId));
+                if (appUserEntity == null)
+                {
+                    return NotFound("Application User not found. Return to login.");
+                }
                 var entity = await _usersRepository.FindByUserIdAsync((id));
                 if (entity == null)
                 {
                     return NotFound("User not found.");
                 }
-                return Ok(entity);
+                if (entity.UserTypeId ==  appUserEntity.UserTypeId )
+                {
+                    return Ok(entity);
+                }
+                return NotFound("User not found.");
             }
             catch (Exception ex)
             {
@@ -210,7 +219,7 @@ namespace RAZSmartDesk.WebUI.Controllers
                 ////var jsonToken = handler.ReadToken(authHeader);
                 //var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
                 //var userId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
-             
+
                 var result = await _usersRepository.UpdateAsync(entity);
                 if (result != null)
                 {
@@ -281,7 +290,7 @@ namespace RAZSmartDesk.WebUI.Controllers
                     //var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token.ToString());
                     //string userApp = jwt.Claims.First(c => c.Type == "Name").Value;
 
-                    return Ok(new { AccessToken = new JwtSecurityTokenHandler().WriteToken(token), RefreshToken = refreshToken });
+                    return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token), RefreshToken = refreshToken });
                 }
             }
 
@@ -310,7 +319,7 @@ namespace RAZSmartDesk.WebUI.Controllers
                 var token = GenerateAccessToken(userId);
 
                 // Return the new access token to the client
-                return Ok(new { AccessToken = new JwtSecurityTokenHandler().WriteToken(token) });
+                return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token) });
             }
 
             return BadRequest("Invalid refresh token");
