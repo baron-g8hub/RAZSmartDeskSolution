@@ -93,7 +93,7 @@ namespace RAZSmartDesk.WebUI.Controllers
                 {
                     return NotFound("User not found.");
                 }
-                if (entity.UserTypeId ==  appUserEntity.UserTypeId )
+                if (entity.UserTypeId ==  appUserEntity.UserTypeId && entity.UserCompanyId == appUserEntity.UserCompanyId)
                 {
                     return Ok(entity);
                 }
