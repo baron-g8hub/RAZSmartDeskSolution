@@ -139,22 +139,27 @@ namespace RAZSmartDesk.WebUI.Controllers
                 {
                     return NotFound("Application User not found. Return to login.");
                 }
-                entity.UserCompanyId = appUserEntity.UserCompanyId;
-                entity.CreatedBy = appUserEntity.Username;
-                entity.UpdatedBy = appUserEntity.Username;
-                entity.CreatedDate = DateTime.UtcNow;
-                entity.UpdatedDate = entity.UpdatedDate;
-                var result = await _usersRepository.AddAsync(entity);
-                if (result != null)
+
+                if (appUserEntity.UserTypeId == 1)
                 {
-                    var response = entity.Username + " user created successfully.";
-                    return Ok(response);
+                    entity.UserCompanyId = appUserEntity.UserCompanyId;
+                    entity.CreatedBy = appUserEntity.Username;
+                    entity.UpdatedBy = appUserEntity.Username;
+                    entity.CreatedDate = DateTime.UtcNow;
+                    entity.UpdatedDate = entity.UpdatedDate;
+                    var result = await _usersRepository.AddAsync(entity);
+                    if (result != null)
+                    {
+                        var response = entity.Username + " user created successfully.";
+                        return Ok(response);
+                    }
+                    return BadRequest(result);
                 }
-                return BadRequest(result);
+                return NotFound("User not found.");
             }
             catch (Exception ex)
             {
-                return this.StatusCode(400, ex.Message);
+                return StatusCode(400, ex.Message);
             }
         }
 
@@ -219,22 +224,32 @@ namespace RAZSmartDesk.WebUI.Controllers
                 {
                     return NotFound("Application User not found. Return to login.");
                 }
-                var entity = await _usersRepository.FindByUserIdAsync((id));
+                var entity = await _usersRepository.FindByUserIdCompanyIdAsync(id, appUserEntity.UserCompanyId);
                 if (entity == null)
                 {
                     return NotFound("User not found.");
                 }
-
-                if (entity.UserTypeId == appUserEntity.UserTypeId && entity.UserCompanyId == appUserEntity.UserCompanyId)
+                switch (appUserEntity.UserTypeId)
                 {
-                    var result = await _usersRepository.RemoveAsync(entity);
-                    if (result != null)
-                    {
-                        var response = entity.Username + " user deleted successfully.";
-                        return Ok(response);
-                    }
-                    return BadRequest(result);
+                    case 1:
+                        if (entity.UserTypeId == appUserEntity.UserTypeId && entity.UserCompanyId == appUserEntity.UserCompanyId)
+                        {
+                            var result = await _usersRepository.RemoveAsync(entity);
+                            if (result != null)
+                            {
+                                var response = entity.Username + " user deleted successfully.";
+                                return Ok(response);
+                            }
+                            return BadRequest(result);
+                        }
+                        break;
+                    case 2:
+                        NotFound("Flat Users not allowed to modify other users.");
+                        break;
+                    default:
+                        break;
                 }
+
                 return NotFound("User not found.");
             }
             catch (Exception ex)

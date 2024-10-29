@@ -30,6 +30,7 @@ namespace RAZSmartDesk.DataAccess.Repositories
                 const string query = @"SELECT a.[UserId]
                                           ,a.Username
 	                                      ,a.Password
+                                          ,a.UserTypeId
 	                                      ,b.CompanyName
 	                                      ,c.UserTypeName
                                           ,a.[IsActive]
@@ -50,6 +51,7 @@ namespace RAZSmartDesk.DataAccess.Repositories
                 const string query = @"SELECT a.[UserId]
                                           ,a.Username
 	                                      ,a.Password
+                                          ,a.UserTypeId
 	                                      ,b.CompanyName
 	                                      ,c.UserTypeName
                                           ,a.[IsActive]
