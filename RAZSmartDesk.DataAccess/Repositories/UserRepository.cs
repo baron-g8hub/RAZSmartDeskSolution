@@ -67,6 +67,32 @@ namespace RAZSmartDesk.DataAccess.Repositories
             }
         }
 
+        public async Task<User?> FindByUserIdCompanyIdAsync(int id, int companyId)
+        {
+            const string query = @"SELECT a.[UserId]
+                                          ,a.UserTypeId
+                                          ,a.Username
+	                                      ,a.Password
+	                                      ,b.CompanyName
+                                          ,a.UserCompanyId
+	                                      ,c.UserTypeName
+                                          ,a.[IsActive]
+                                          ,a.[CreatedBy]
+                                          ,a.[CreatedDate]
+                                          ,a.[UpdatedBy]
+                                          ,a.[UpdatedDate]
+                                      FROM [Users] as a
+                                      INNER JOIN Companies as b
+                                      ON a.UserCompanyId = b.CompanyId 
+                                      INNER JOIN UserTypes as c
+                                      ON  a.UserTypeId = c.UserTypeId
+                                      WHERE a.UserId=@id AND a.UserCompanyId = @companyId";
+
+            using var connection = _context.CreateConnection();
+            var result = await connection.QuerySingleOrDefaultAsync<User>(query, new { id, companyId });
+            return result;
+        }
+
         public async Task<User?> FindByUserIdAsync(int id)
         {
             const string query = @"SELECT a.[UserId]

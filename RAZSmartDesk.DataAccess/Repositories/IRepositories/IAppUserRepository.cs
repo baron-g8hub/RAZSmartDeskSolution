@@ -10,6 +10,7 @@ namespace RAZSmartDesk.DataAccess.Repositories.IRepositories
     public interface IAppUserRepository 
     {
         Task<IEnumerable<User>> GetAppUsersByCompanyIdAsync(int companyId, int userTypeId);
+        Task<User?> FindByUserIdCompanyIdAsync(int id, int companyId);
 
         Task<User?> FindByUserIdAsync(int id);
 

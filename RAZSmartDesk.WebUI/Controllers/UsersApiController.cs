@@ -14,6 +14,7 @@ using System.Text;
 using static Dapper.SqlMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.RateLimiting;
+using System.Linq.Expressions;
 
 namespace RAZSmartDesk.WebUI.Controllers
 {
@@ -56,7 +57,7 @@ namespace RAZSmartDesk.WebUI.Controllers
                 var appUserEntity = await _usersRepository.FindByUserIdAsync(int.Parse(appUserId));
                 if (appUserEntity == null)
                 {
-                    return NotFound("User not found.");
+                    return NotFound("Application User not found. Return to login");
                 }
                 var entity = await _usersRepository.GetAppUsersByCompanyIdAsync(appUserEntity.UserCompanyId, appUserEntity.UserTypeId);
                 return Ok(entity);
@@ -88,14 +89,24 @@ namespace RAZSmartDesk.WebUI.Controllers
                 {
                     return NotFound("Application User not found. Return to login.");
                 }
-                var entity = await _usersRepository.FindByUserIdAsync((id));
+                var entity = await _usersRepository.FindByUserIdCompanyIdAsync(id, appUserEntity.UserCompanyId);
                 if (entity == null)
                 {
                     return NotFound("User not found.");
                 }
-                if (entity.UserTypeId ==  appUserEntity.UserTypeId && entity.UserCompanyId == appUserEntity.UserCompanyId)
+                switch (appUserEntity.UserTypeId)
                 {
-                    return Ok(entity);
+                    case 1:
+                        return Ok(entity);
+                        break;
+                    case 2:
+                        if (entity.UserTypeId == appUserEntity.UserTypeId)
+                        {
+                            return Ok(entity);
+                        }
+                        break;
+                    default:
+                        break;
                 }
                 return NotFound("User not found.");
             }
@@ -129,16 +140,17 @@ namespace RAZSmartDesk.WebUI.Controllers
                     return NotFound("Application User not found. Return to login.");
                 }
                 entity.UserCompanyId = appUserEntity.UserCompanyId;
+                entity.CreatedBy = appUserEntity.Username;
+                entity.UpdatedBy = appUserEntity.Username;
+                entity.CreatedDate = DateTime.UtcNow;
+                entity.UpdatedDate = entity.UpdatedDate;
                 var result = await _usersRepository.AddAsync(entity);
                 if (result != null)
                 {
-                    var  response = entity.Username + " user created successfully.";
+                    var response = entity.Username + " user created successfully.";
                     return Ok(response);
                 }
-                else
-                {
-                    return BadRequest(result);
-                }
+                return BadRequest(result);
             }
             catch (Exception ex)
             {
@@ -154,24 +166,30 @@ namespace RAZSmartDesk.WebUI.Controllers
         {
             try
             {
-                //var handler = new JwtSecurityTokenHandler();
-                //string authHeader = Request.Headers["Authorization"];
-                //authHeader = authHeader.Replace("Bearer ", "");
-                ////var jsonToken = handler.ReadToken(authHeader);
-                //var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-                //var userId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
+                var handler = new JwtSecurityTokenHandler();
+                string authHeader = Request.Headers["Authorization"];
+                authHeader = authHeader.Replace("Bearer ", "");
+                var jsonToken = handler.ReadToken(authHeader);
+                var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+                var appUserId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
 
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var appUserEntity = await _usersRepository.FindByUserIdAsync(int.Parse(appUserId));
+                if (appUserEntity == null)
+                {
+                    return NotFound("Application User not found. Return to login.");
+                }
+                entity.UpdatedBy = appUserEntity.Username;
+                entity.UpdatedDate = DateTime.UtcNow;
                 var result = await _usersRepository.UpdateAsync(entity);
                 if (result != null)
                 {
-                    //  result = entity.Username + " account created successfully.";
-                    //return CreatedAtAction("GetUers", new { userId = entity.UserId });
-                    return Ok(result);
+                    var response = entity.Username + " user updated successfully.";
+                    return Ok(response);
                 }
-                else
-                {
-                    return BadRequest(result);
-                }
+                return BadRequest(result);
             }
             catch (Exception ex)
             {
@@ -186,22 +204,38 @@ namespace RAZSmartDesk.WebUI.Controllers
         {
             try
             {
-                var entity = new User();
-                entity = await _usersRepository.FindByUserIdAsync(id);
-                if (entity != null)
+                var handler = new JwtSecurityTokenHandler();
+                string authHeader = Request.Headers["Authorization"];
+                authHeader = authHeader.Replace("Bearer ", "");
+                var jsonToken = handler.ReadToken(authHeader);
+                var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+                var appUserId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
+
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var appUserEntity = await _usersRepository.FindByUserIdAsync(int.Parse(appUserId));
+                if (appUserEntity == null)
+                {
+                    return NotFound("Application User not found. Return to login.");
+                }
+                var entity = await _usersRepository.FindByUserIdAsync((id));
+                if (entity == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                if (entity.UserTypeId == appUserEntity.UserTypeId && entity.UserCompanyId == appUserEntity.UserCompanyId)
                 {
                     var result = await _usersRepository.RemoveAsync(entity);
                     if (result != null)
                     {
-                        var response = "User deleted successfully.";
+                        var response = entity.Username + " user deleted successfully.";
                         return Ok(response);
                     }
-                    else
-                    {
-                        return BadRequest(result);
-                    }
+                    return BadRequest(result);
                 }
-                return Ok();
+                return NotFound("User not found.");
             }
             catch (Exception ex)
             {
