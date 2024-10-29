@@ -7,7 +7,7 @@
 <h4><h1>@Model.CompanyName  <span>List of Users</span> </h1></h4>
 <hr />
 
-@if (Model.Entity.UserTypeId == 1)
+@if (Model.Entity.UserTypeId == 3)
 {
     <ul class="nav">
         <li class="nav-item">
@@ -98,7 +98,7 @@
                 <td scope="row">
                     @Html.DisplayFor(modelItem => item.UpdatedDate)
                 </td>
-                @if (Model.Entity.UserTypeId == 1)
+                @if (Model.Entity.UserTypeId == 3)
                 {
                     <td scope="row" style="text-align: center;">
                         <a asp-controller="User" asp-action="Create" asp-route-id="@item.UserId">Edit</a> |
