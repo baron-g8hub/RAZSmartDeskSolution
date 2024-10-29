@@ -71,16 +71,17 @@ namespace RAZSmartDesk.WebUI.Controllers
         [Authorize]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            //var handler = new JwtSecurityTokenHandler();
-            //string authHeader = Request.Headers["Authorization"];
-            //authHeader = authHeader.Replace("Bearer ", "");
-            ////var jsonToken = handler.ReadToken(authHeader);
-            //var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-            //var userId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
+            var handler = new JwtSecurityTokenHandler();
+            string authHeader = Request.Headers["Authorization"];
+            authHeader = authHeader.Replace("Bearer ", "");
+            //var jsonToken = handler.ReadToken(authHeader);
+            var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+            var userId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
+
 
                 var entity = await _usersRepository.FindByUserIdAsync((id));
                 if (entity == null)
@@ -103,17 +104,17 @@ namespace RAZSmartDesk.WebUI.Controllers
         {
             try
             {
-                //var handler = new JwtSecurityTokenHandler();
-                //string authHeader = Request.Headers["Authorization"];
-                //authHeader = authHeader.Replace("Bearer ", "");
-                //var jsonToken = handler.ReadToken(authHeader);
-                //var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-                //var userId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
+                var handler = new JwtSecurityTokenHandler();
+                string authHeader = Request.Headers["Authorization"];
+                authHeader = authHeader.Replace("Bearer ", "");
+                var jsonToken = handler.ReadToken(authHeader);
+                var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+                var appUserId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var user = await _usersRepository.FindByUserIdAsync(int.Parse(userId));
+                var user = await _usersRepository.FindByUserIdAsync(int.Parse(appUserId));
                 if (user == null)
                 {
                     return NotFound("Users not found.");
