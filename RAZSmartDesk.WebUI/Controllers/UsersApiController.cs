@@ -20,7 +20,7 @@ namespace RAZSmartDesk.WebUI.Controllers
 
     [Route("[controller]/[action]")]
     [ApiController]
-    [EnableRateLimiting("fixed")]
+  
     public class UsersApiController : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -68,6 +68,7 @@ namespace RAZSmartDesk.WebUI.Controllers
 
         [HttpGet("{userId}")]
         [Authorize]
+        [EnableRateLimiting("fixed")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers(string userId)
         {
             try
@@ -130,6 +131,7 @@ namespace RAZSmartDesk.WebUI.Controllers
 
         [HttpPost]
         [Authorize]
+        [EnableRateLimiting("fixed")]
         public async Task<IActionResult> Add([FromBody] User entity)
         {
             try
@@ -166,6 +168,7 @@ namespace RAZSmartDesk.WebUI.Controllers
 
         [HttpPost]
         [Authorize]
+        [EnableRateLimiting("fixed")]
         public async Task<IActionResult> Update([FromBody] User entity)
         {
             try

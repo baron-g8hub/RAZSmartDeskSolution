@@ -20,7 +20,7 @@ builder.Services.AddRateLimiter(rateLimiterOptions =>
     rateLimiterOptions.AddFixedWindowLimiter("fixed", options =>
     {
         options.PermitLimit = 1;
-        options.Window = TimeSpan.FromSeconds(5);
+        options.Window = TimeSpan.FromSeconds(60);
         options.QueueLimit = 10;
     });
 });
