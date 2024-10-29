@@ -5,6 +5,7 @@ using RAZSmartDesk.DataAccess.DapperDBContext;
 using RAZSmartDesk.DataAccess.Repositories;
 using RAZSmartDesk.DataAccess.Repositories.IRepositories;
 using System.Text;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,8 +21,9 @@ builder.Services.AddRateLimiter(rateLimiterOptions =>
     rateLimiterOptions.AddFixedWindowLimiter("fixed", options =>
     {
         options.PermitLimit = 1;
-        options.Window = TimeSpan.FromSeconds(60);
-        options.QueueLimit = 10;
+        options.Window = TimeSpan.FromSeconds(6);
+        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        options.QueueLimit = 2;
     });
 });
 

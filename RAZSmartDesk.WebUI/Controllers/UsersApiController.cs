@@ -21,7 +21,6 @@ namespace RAZSmartDesk.WebUI.Controllers
 
     [Route("[controller]/[action]")]
     [ApiController]
-
     public class UsersApiController : ControllerBase
     {
         private readonly IConfiguration _configuration;
