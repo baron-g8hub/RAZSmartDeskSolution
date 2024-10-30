@@ -141,6 +141,16 @@ namespace RAZSmartDesk.WebUI.Controllers
 
                 if (appUserEntity.UserTypeId == 1)
                 {
+                    var list = await _usersRepository.GetAppUsersByCompanyIdAsync(appUserEntity.UserCompanyId, 1);
+                    if (list.Count() > 0)
+                    {
+                        var isUserExist = list.Any(x => x.Username == entity.Username);
+                        if (isUserExist)
+                        {
+                            return BadRequest(entity.Username +  " username already exist.");
+                        }
+                    }
+
                     entity.UserCompanyId = appUserEntity.UserCompanyId;
                     entity.CreatedBy = appUserEntity.Username;
                     entity.UpdatedBy = appUserEntity.Username;
