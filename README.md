@@ -1,4 +1,4 @@
-Submission of the coding exam for RazorERP .Net Developer.
+Submission of the coding exam for .Net Developer.
 
 1. Repository of the project both the Asp.Net Core WebAPI solution and Database.
  - I named the exam project as “RAZSmartDesk”. 
