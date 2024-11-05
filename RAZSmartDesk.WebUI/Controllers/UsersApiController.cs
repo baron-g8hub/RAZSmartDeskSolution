@@ -21,6 +21,7 @@ namespace RAZSmartDesk.WebUI.Controllers
 
     [Route("[controller]/[action]")]
     [ApiController]
+    [EnableRateLimiting("fixed")]
     public class UsersApiController : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -42,12 +43,7 @@ namespace RAZSmartDesk.WebUI.Controllers
         [EnableRateLimiting("fixed")]
         public async Task<ActionResult<User>> Get()
         {
-            var handler = new JwtSecurityTokenHandler();
-            string authHeader = Request.Headers["Authorization"];
-            authHeader = authHeader.Replace("Bearer ", "");
-            //var jsonToken = handler.ReadToken(authHeader);
-            var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-            var appUserId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
+            var appUserId = GetTokenClaims();
             try
             {
                 if (!ModelState.IsValid)
@@ -70,14 +66,10 @@ namespace RAZSmartDesk.WebUI.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
+        [EnableRateLimiting("fixed")]
         public async Task<ActionResult<User>> Get(int id)
         {
-            var handler = new JwtSecurityTokenHandler();
-            string authHeader = Request.Headers["Authorization"];
-            authHeader = authHeader.Replace("Bearer ", "");
-            //var jsonToken = handler.ReadToken(authHeader);
-            var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-            var appUserId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
+            var appUserId = GetTokenClaims();
             try
             {
                 if (!ModelState.IsValid)
@@ -123,13 +115,7 @@ namespace RAZSmartDesk.WebUI.Controllers
         {
             try
             {
-                var handler = new JwtSecurityTokenHandler();
-                string authHeader = Request.Headers["Authorization"];
-                authHeader = authHeader.Replace("Bearer ", "");
-                var jsonToken = handler.ReadToken(authHeader);
-                var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-                var appUserId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
-
+                var appUserId = GetTokenClaims();
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
@@ -180,13 +166,7 @@ namespace RAZSmartDesk.WebUI.Controllers
         {
             try
             {
-                var handler = new JwtSecurityTokenHandler();
-                string authHeader = Request.Headers["Authorization"];
-                authHeader = authHeader.Replace("Bearer ", "");
-                var jsonToken = handler.ReadToken(authHeader);
-                var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-                var appUserId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
-
+                var appUserId = GetTokenClaims();
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
@@ -219,17 +199,12 @@ namespace RAZSmartDesk.WebUI.Controllers
 
         [HttpDelete("{id}")]
         [Authorize]
+        [EnableRateLimiting("fixed")]
         public async Task<IActionResult> DeleteById(int id)
         {
             try
             {
-                var handler = new JwtSecurityTokenHandler();
-                string authHeader = Request.Headers["Authorization"];
-                authHeader = authHeader.Replace("Bearer ", "");
-                var jsonToken = handler.ReadToken(authHeader);
-                var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-                var appUserId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
-
+                var appUserId = GetTokenClaims();
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
@@ -274,7 +249,6 @@ namespace RAZSmartDesk.WebUI.Controllers
 
 
         #region Authenticate User
-
         [HttpPost]
         public async Task<IActionResult> LoginAsync([FromBody] LoginModel model)
         {
@@ -357,8 +331,17 @@ namespace RAZSmartDesk.WebUI.Controllers
             return token;
         }
 
+        private string GetTokenClaims()
+        {
+            var handler = new JwtSecurityTokenHandler();
+            string authHeader = Request.Headers["Authorization"];
+            authHeader = authHeader.Replace("Bearer ", "");
+            //var jsonToken = handler.ReadToken(authHeader);
+            var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+            var appUserId = tokenS.Claims.First(claim => claim.Type == "Username").Value;
 
-
+            return appUserId;
+        }
         #endregion
     }
 }
