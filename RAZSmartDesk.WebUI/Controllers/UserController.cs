@@ -22,13 +22,9 @@ namespace RAZSmartDesk.WebUI.Controllers
 {
     public class UserController : Controller
     {
-        private readonly IAppUserRepository _repository;
-
-        public static Dictionary<string, string> RefreshTokens = new Dictionary<string, string>();
-
-        public UserController(IAppUserRepository repository)
+        public UserController()
         {
-            _repository = repository;
+
         }
 
 
@@ -51,56 +47,51 @@ namespace RAZSmartDesk.WebUI.Controllers
         {
             try
             {
-                var user = await _repository.FindByUsernamePasswordAsync(model.Username, model.Password);
-                var entity = new User();
-                if (user != null)
-                {
-                    entity = user;
-                    // AuthApi call to request login
-                    var vm = new ApplicationUserModel();
-
-                    var tokenModel = new TokenModel();
-
-                    var myContent = JsonConvert.SerializeObject(model);
-                    var response = string.Empty;
-                    using (var httpClient = new HttpClient())
-                    {
-                        var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
-                        var byteContent = new ByteArrayContent(buffer);
-                        byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                        var url = "http://" + HttpContext.Request.Host.Value;
-                        if (Request.Host.Host == "localhost")
-                        {
-                            url = "https://" + HttpContext.Request.Host.Value + "/UsersApi/login";
-                        }
-                        HttpResponseMessage result = await httpClient.PostAsync(url, byteContent);
-                        if (result.IsSuccessStatusCode)
-                        {
-                            response = result.StatusCode.ToString();
-                            string apiResponse = await result.Content.ReadAsStringAsync();
-                            if (tokenModel != null)
-                            {
-                                tokenModel = JsonConvert.DeserializeObject<TokenModel>(apiResponse);
-                                HttpContext.Session.SetString("JWToken", tokenModel.AccessToken);
-                            }
-                            //return RedirectToAction("Users", "User");
-                            return RedirectToAction(nameof(Users));
-                        }
-                        else
-                        {
-                            string apiResponse = await result.Content.ReadAsStringAsync();
-                            return RedirectToAction(nameof(Users));
-                        }
-                    }
-                    // Redirect to AppUsers Page then call AppUserApi for content request
-                    // Pass the AppUserContext object
-                    return RedirectToAction(nameof(Users));
-                }
-                else
+                if (!ModelState.IsValid)
                 {
                     return View(model);
                 }
+
+                // AuthApi call to request login
+                var vm = new ApplicationUserModel();
+
+                var tokenModel = new TokenModel();
+
+                var myContent = JsonConvert.SerializeObject(model);
+                var response = string.Empty;
+                using (var httpClient = new HttpClient())
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
+                    var byteContent = new ByteArrayContent(buffer);
+                    byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    var url = "http://" + HttpContext.Request.Host.Value;
+                    if (Request.Host.Host == "localhost")
+                    {
+                        url = "https://" + HttpContext.Request.Host.Value + "/UsersApi/login";
+                    }
+
+                    HttpResponseMessage result = await httpClient.PostAsync(url, byteContent);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        response = result.StatusCode.ToString();
+                        string apiResponse = await result.Content.ReadAsStringAsync();
+                        if (tokenModel != null)
+                        {
+                            tokenModel = JsonConvert.DeserializeObject<TokenModel>(apiResponse);
+                            HttpContext.Session.SetString("JWToken", tokenModel.AccessToken);
+                        }
+
+                        //return RedirectToAction("Users", "User");
+                        return RedirectToAction(nameof(Users));
+                    }
+                    else
+                    {
+                        string apiResponse = await result.Content.ReadAsStringAsync();
+                        return RedirectToAction(nameof(Users));
+                    }
+                }
             }
+
             catch (Exception e)
             {
                 Console.WriteLine(e);
