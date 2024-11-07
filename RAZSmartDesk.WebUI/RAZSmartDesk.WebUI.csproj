@@ -16,4 +16,8 @@
     <ProjectReference Include="..\RAZSmartDesk.DataAccess\RAZSmartDesk.DataAccess.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\serverfiles\images\" />
+  </ItemGroup>
+
 </Project>
