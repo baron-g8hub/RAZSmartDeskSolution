@@ -12,7 +12,7 @@ namespace UnitTests
 
 
             // Act
-            var controller = new UsersApiController()
+            var controller = new UsersApiController();
 
 
             //Assert
