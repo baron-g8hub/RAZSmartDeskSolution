@@ -4,28 +4,34 @@
     ViewData["Title"] = "Users";
 }
 
-<h4><h1>@Model.CompanyName  <span>List of Users</span> </h1></h4>
-<hr />
+<nav class="navbar">
+    <div class="container-fluid container-sm">
+        <ul class="nav navbar-nav">
+            <li class="active">
+                <h4>@Model.CompanyName - List of Users</h4>
+            </li>
+        </ul>
+        <ul class="nav navbar-right">
+            @*  <li class="nav-item">
+                <a class="btn btn-sm btn-success" asp-controller="User" asp-action="Create">
+                    <i class="fas fa-circle-plus"></i>
+                    User
+                </a>
+            </li>
+            <li class="nav-item" style="padding-top: 0px; padding-right: 5px; padding-bottom: 10px; padding-left: 5px;">
+                <a class="btn btn-success btn-sm" asp-controller="Transactions" asp-action="Transfer">
+                    <i class="fas fa-copy"></i>
+                    Transfer
+                </a>
+            </li> *@
+        </ul>
+    </div>
+</nav>
 
-@if (Model.Entity.UserTypeId == 3)
-{
-    <ul class="nav">
-        <li class="nav-item">
-            <a class="btn btn-primary btn-sm" asp-controller="User" asp-action="Create">
-                <i class="fas fa-circle-plus"></i>
-                User
-            </a>
-        </li>
-        @* <li class="nav-item" style="padding-top: 0px; padding-right: 5px; padding-bottom: 10px; padding-left: 5px;">
-        <a class="btn btn-primary btn-sm" asp-controller="Transactions" asp-action="Transfer">
-            <i class="fas fa-copy"></i>
-            Transfer
-        </a>
-    </li> *@
-    </ul>
-}
 
-<table class="table table-bordered table-sm">
+<div class="table-responsive border border-dark">
+
+ <table class="table table-bordered table-sm">
     <thead class="table-light">
         <tr>
             <th scope="col">
@@ -44,74 +50,75 @@
                 Company
             </th>
             <th scope="col">
-                @Html.DisplayNameFor(model => model.Entity.IsActive)
+                    @Html.DisplayNameFor(model => model.Entity.IsActive)
             </th>
             <th scope="col">
-                @Html.DisplayNameFor(model => model.Entity.CreatedBy)
+                    @Html.DisplayNameFor(model => model.Entity.CreatedBy)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Entity.CreatedDate)
+                    @Html.DisplayNameFor(model => model.Entity.CreatedDate)
             </th>
             <th scope="col">
-                @Html.DisplayNameFor(model => model.Entity.UpdatedBy)
+                    @Html.DisplayNameFor(model => model.Entity.UpdatedBy)
             </th>
             <th scope="col">
-                @Html.DisplayNameFor(model => model.Entity.UpdatedDate)
+                    @Html.DisplayNameFor(model => model.Entity.UpdatedDate)
             </th>
-            @if (Model.Entity.UserTypeId == 1)
-            {
-                <th scope="col"> Options </th>
-            }
+                @if (Model.Entity.UserTypeId == 1)
+                {
+                    <th scope="col"> Options </th>
+                }
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.EntityList)
-        {
-            <tr>
-                <td scope="row">
-                    @Html.DisplayFor(modelItem => item.UserId)
-                </td>
-                <td scope="row">
-                    @Html.DisplayFor(modelItem => item.Username)
-                </td>
-                <td scope="row">
-                    @Html.DisplayFor(modelItem => item.Password)
-                </td>
-                <td scope="row">
-                    @Html.DisplayFor(modelItem => item.UserTypeName)
-                </td>
-                <td scope="row">
-                    @Html.DisplayFor(modelItem => item.CompanyName)
-                </td>
-                <td scope="row">
-                    @Html.DisplayFor(modelItem => item.IsActive)
-                </td>
-                <td scope="row">
-                    @Html.DisplayFor(modelItem => item.CreatedBy)
-                </td>
-                <td scope="row">
-                    @Html.DisplayFor(modelItem => item.CreatedDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UpdatedBy)
-                </td>
-                <td scope="row">
-                    @Html.DisplayFor(modelItem => item.UpdatedDate)
-                </td>
-                @if (Model.Entity.UserTypeId == 3)
-                {
-                    <td scope="row" style="text-align: center;">
-                        <a asp-controller="User" asp-action="Create" asp-route-id="@item.UserId">Edit</a> |
+            @foreach (var item in Model.EntityList)
+            {
+                <tr>
+                        <td scope="row" style="font-family: sans-serif;">
+                        @Html.DisplayFor(modelItem => item.UserId)
+                    </td>
+                    <td scope="row">
+                        @Html.DisplayFor(modelItem => item.Username)
+                    </td>
+                    <td scope="row">
+                        @Html.DisplayFor(modelItem => item.Password)
+                    </td>
+                    <td scope="row">
+                        @Html.DisplayFor(modelItem => item.UserTypeName)
+                    </td>
+                    <td scope="row">
+                        @Html.DisplayFor(modelItem => item.CompanyName)
+                    </td>
+                    <td scope="row">
+                        @Html.DisplayFor(modelItem => item.IsActive)
+                    </td>
+                    <td scope="row">
+                        @Html.DisplayFor(modelItem => item.CreatedBy)
+                    </td>
+                    <td scope="row">
+                        @Html.DisplayFor(modelItem => item.CreatedDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UpdatedBy)
+                    </td>
+                    <td scope="row">
+                        @Html.DisplayFor(modelItem => item.UpdatedDate)
+                    </td>
+                    @if (Model.Entity.UserTypeId == 3)
+                    {
+                            <td scope="row" style="text-align: center;">
+                            @* <a asp-controller="User" asp-action="Create" asp-route-id="@item.UserId">Edit</a> |
                         @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                        <a asp-controller="User" asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
-                        @* <form method="post">
+                        <a asp-controller="User" asp-action="Delete" asp-route-id="@item.UserId">Delete</a> *@
+                            @* <form method="post">
                             <a class="btn btn-sm btn-outline-primary" asp-controller="User" asp-action="Create" asp-route-id="@item.UserId">
                                 <i class="fas fa-edit"></i>
                             </a>
                         </form> *@
-                    </td>
-                }
-            </tr>
-        }
+                            </td>
+                    }
+                </tr>
+            }
     </tbody>
 </table>
+</div>
