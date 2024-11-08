@@ -129,7 +129,7 @@ namespace RAZSmartDesk.API.Controllers
                     var list = await _usersRepository.GetAppUsersByCompanyIdAsync(appUserEntity.UserCompanyId, 1);
                     if (list.Count() > 0)
                     {
-                        var isUserExist = list.Any(x => x.Username == entity.Username);
+                        var isUserExist = list.Any(x => x.Username.ToUpper() == entity.Username.ToUpper());
                         if (isUserExist)
                         {
                             return BadRequest(entity.Username +  " username already exist.");
