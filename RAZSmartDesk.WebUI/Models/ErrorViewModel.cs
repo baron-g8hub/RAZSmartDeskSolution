@@ -1,4 +1,4 @@
-namespace RAZSmartDesk.WebUI.Models
+namespace RAZSmartDesk.API.Models
 {
     public class ErrorViewModel
     {

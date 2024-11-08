@@ -1,24 +1,13 @@
-﻿using Azure.Core;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using NuGet.Common;
-using RAZSmartDesk.DataAccess.Repositories.IRepositories;
+using RAZSmartDesk.API.Models;
 using RAZSmartDesk.Entities;
-using RAZSmartDesk.WebUI.Models;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Transactions;
-using Microsoft.AspNetCore.Identity;
-using RAZSmartDesk.Models;
-using static Dapper.SqlMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authentication;
-using RAZSmartDesk.DataAccess.Repositories;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace RAZSmartDesk.WebUI.Controllers
+namespace RAZSmartDesk.API.Controllers
 {
     public class UserController : Controller
     {

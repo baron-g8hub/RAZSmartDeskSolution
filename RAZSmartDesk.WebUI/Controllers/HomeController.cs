@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using RAZSmartDesk.WebUI.Models;
+using RAZSmartDesk.API.Models;
 using System.Diagnostics;
 
-namespace RAZSmartDesk.WebUI.Controllers
+namespace RAZSmartDesk.API.Controllers
 {
     public class HomeController : Controller
     {

@@ -1,4 +1,4 @@
-﻿namespace RAZSmartDesk.Models
+﻿namespace RAZSmartDesk.API.Models
 {
     public class TokenModel
     {

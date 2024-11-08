@@ -7,16 +7,15 @@ using NuGet.Common;
 using NuGet.Protocol.Core.Types;
 using RAZSmartDesk.DataAccess.Repositories.IRepositories;
 using RAZSmartDesk.Entities;
-using RAZSmartDesk.WebUI.Models;
+using RAZSmartDesk.API.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using static Dapper.SqlMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Linq.Expressions;
 
-namespace RAZSmartDesk.WebUI.Controllers
+namespace RAZSmartDesk.API.Controllers
 {
 
     [Route("[controller]/[action]")]

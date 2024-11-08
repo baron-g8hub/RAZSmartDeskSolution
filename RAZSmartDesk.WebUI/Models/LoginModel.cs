@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace RAZSmartDesk.WebUI.Models
+namespace RAZSmartDesk.API.Models
 {
     public class LoginModel
     {
